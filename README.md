@@ -1,16 +1,97 @@
-# React + Vite
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+# AI Code Review System
 
-Currently, two official plugins are available:
+A full-stack AI-powered code review platform built with React, Node.js, Express, Supabase, and OpenAI.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Features
 
-## React Compiler
+- **Static Analysis**: ESLint integration for syntax errors, unused variables, and coding standard violations
+- **Code Metrics**: Cyclomatic complexity, lines of code, number of functions/classes, and more
+- **AI Reviews**: OpenAI integration for intelligent code analysis, bug detection, security recommendations, and refactoring suggestions
+- **Multiple Input Methods**:
+  - Paste code directly
+  - Upload JavaScript/JSX files
+  - Analyze public GitHub repositories
+- **Real Backend & Database**: No mock data! All data persisted in Supabase
+- **Authentication**: Supabase Auth integration
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Project Structure
 
-## Expanding the ESLint configuration
+```
+Ai code review system/
+├── backend/        # Node.js + Express backend
+│   ├── controllers/
+│   ├── routes/
+│   ├── middleware/
+│   ├── services/
+│   ├── utils/
+│   └── ...
+└── front end/      # React frontend
+    ├── src/
+    └── ...
+```
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## Setup Instructions
+
+### 1. Backend Setup
+
+1. Go to the `backend` directory: `cd backend`
+2. Install dependencies: `npm install`
+3. Create a `.env` file in the backend directory (use `.env.example` as a template)
+4. Set up Supabase (see `backend/SUPABASE_SETUP.md` for detailed instructions)
+5. Start the backend server: `npm start`
+
+### 2. Frontend Setup
+
+1. Go to the `front end` directory: `cd "front end"`
+2. Install dependencies: `npm install`
+3. Create a `.env` file in the front end directory (use `.env.example` as a template)
+4. Start the frontend dev server: `npm run dev`
+
+## Environment Variables
+
+### Backend (.env)
+
+```env
+PORT=3001
+SUPABASE_URL=your_supabase_project_url
+SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_role_key
+OPENAI_API_KEY=your_openai_api_key
+NODE_ENV=development
+```
+
+### Frontend (.env)
+
+```env
+VITE_API_BASE_URL=http://localhost:3001
+```
+
+## How to Use
+
+1. Start both backend and frontend servers
+2. Sign up or log in using Supabase Auth
+3. Create a new code review using one of the available methods
+4. View your review history and detailed analysis reports
+
+## Technologies Used
+
+### Backend
+- Node.js
+- Express.js
+- Supabase (database + auth)
+- OpenAI API
+- ESLint (static analysis)
+- Espree (AST parsing)
+- Simple-git (repo cloning)
+
+### Frontend
+- React
+- React Router
+- Framer Motion (animations)
+- Lucide React (icons)
+- Monaco Editor (code editor)
+- Vite (build tool)
+
+## License
+
+MIT
