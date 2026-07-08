@@ -131,12 +131,10 @@ export default function DetailedReport() {
           </Link>
           <div>
             <div className="flex items-center gap-2">
-              <span className="text-xs font-semibold text-indigo-400 font-mono uppercase tracking-wider">{review.id}</span>
-              <span className="w-1 h-1 rounded-full bg-[#1f1f23]" />
               <span className="text-xs text-[#6b7280]">Created {new Date(createdAt).toLocaleDateString()}</span>
             </div>
             <h2 className="text-2xl font-bold tracking-tight text-white m-0 mt-0.5">
-              {review.type === 'github' ? review.repo_url : review.type === 'upload' ? 'File Upload Review' : 'Code Review'}
+              {review.project_name || 'Untitled Review'}
             </h2>
           </div>
         </div>
@@ -187,7 +185,7 @@ export default function DetailedReport() {
         <div className="glass-panel p-6 rounded-2xl border border-[#1f1f23] lg:col-span-2 flex flex-col justify-between">
           <span className="text-xs font-bold text-[#9ca3af] uppercase tracking-wider mb-4">Code Metrics</span>
           
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
             {review.metrics?.project && (
               <>
                 <div className="space-y-2 p-3 rounded-xl bg-[#0c0c0e] border border-[#1f1f23]">

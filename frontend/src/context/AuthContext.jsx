@@ -1,6 +1,7 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import toast from 'react-hot-toast';
 import { supabase } from '../lib/supabase';
+import { useNavigate } from 'react-router-dom';
 
 const AuthContext = createContext(null);
 
@@ -32,6 +33,7 @@ export const AuthProvider = ({ children }) => {
   const [theme, setTheme] = useState(() => {
     return localStorage.getItem('pulsar_theme') || 'dark';
   });
+  const navigate = useNavigate();
 
   // Apply theme class to document element
   useEffect(() => {
@@ -52,22 +54,28 @@ export const AuthProvider = ({ children }) => {
 
   // Sync Supabase Auth session with App user state
   useEffect(() => {
+    let mounted = true;
+    
     const checkSession = async () => {
       try {
         const { data: { session } } = await supabase.auth.getSession();
-        if (session) {
-          const userObj = createUserObject(session, theme);
-          setUser(userObj);
-          localStorage.setItem('pulsar_user', JSON.stringify(userObj));
-        } else {
-          setUser(null);
-          localStorage.removeItem('pulsar_user');
+        if (mounted) {
+          if (session) {
+            const userObj = createUserObject(session, theme);
+            setUser(userObj);
+          } else {
+            setUser(null);
+          }
         }
       } catch (err) {
         console.error('Error checking session:', err);
-        setUser(null);
+        if (mounted) {
+          setUser(null);
+        }
       } finally {
-        setLoading(false);
+        if (mounted) {
+          setLoading(false);
+        }
       }
     };
 
@@ -75,24 +83,24 @@ export const AuthProvider = ({ children }) => {
 
     // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      if (session) {
-        const userObj = createUserObject(session, theme);
-        setUser(userObj);
-        localStorage.setItem('pulsar_user', JSON.stringify(userObj));
-        
-      } else {
-        setUser(null);
-        localStorage.removeItem('pulsar_user');
+      if (mounted) {
+        if (session) {
+          const userObj = createUserObject(session, theme);
+          setUser(userObj);
+        } else {
+          setUser(null);
+        }
+        setLoading(false);
       }
-      setLoading(false);
     });
 
     return () => {
+      mounted = false;
       subscription?.unsubscribe();
     };
   }, [theme]);
 
-  const login = async (email, password, rememberMe) => {
+  const login = useCallback(async (email, password, rememberMe) => {
     setLoading(true);
     try {
       const { data, error } = await supabase.auth.signInWithPassword({
@@ -108,42 +116,27 @@ export const AuthProvider = ({ children }) => {
         } else {
           toast.error(error.message);
         }
-        setLoading(false);
         return false;
       }
 
       if (data?.session) {
-        const userObj = createUserObject(data.session, theme);
-        setUser(userObj);
-        localStorage.setItem('pulsar_user', JSON.stringify(userObj));
-        if (rememberMe) {
-          localStorage.setItem('pulsar_remember_me', 'true');
-        }
         toast.success('Successfully logged in!');
-        setLoading(false);
         return true;
       }
 
-      setLoading(false);
       return false;
     } catch (err) {
       console.error('Login error:', err);
       toast.error('An unexpected error occurred during login');
-      setLoading(false);
       throw err;
+    } finally {
+      setLoading(false);
     }
-  };
+  }, []);
 
-  const signUp = async (email, password, name) => {
+  const signUp = useCallback(async (email, password, name) => {
     setLoading(true);
     try {
-      // Check if user already exists
-      const { data: existingUser, error: checkError } = await supabase
-        .from('auth.users')
-        .select('email')
-        .eq('email', email)
-        .single();
-
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
@@ -172,37 +165,29 @@ export const AuthProvider = ({ children }) => {
         } else {
           toast.error(error.message);
         }
-        setLoading(false);
         return false;
       }
 
       if (data?.user) {
-        // If signup was successful, try to auto-login
         if (data?.session) {
-          const userObj = createUserObject(data.session, theme);
-          setUser(userObj);
-          localStorage.setItem('pulsar_user', JSON.stringify(userObj));
           toast.success('Account created! Welcome to PulsarAI.');
-          setLoading(false);
-          return true;
         } else {
           toast.success('Account created! Please check your email to confirm your registration.');
-          setLoading(false);
-          return true;
         }
+        return true;
       }
 
-      setLoading(false);
       return false;
     } catch (err) {
       console.error('SignUp error:', err);
       toast.error('An unexpected error occurred during signup');
-      setLoading(false);
       throw err;
+    } finally {
+      setLoading(false);
     }
-  };
+  }, []);
 
-  const forgotPassword = async (email) => {
+  const forgotPassword = useCallback(async (email) => {
     setLoading(true);
     try {
       const { data, error } = await supabase.auth.resetPasswordForEmail(email, {
@@ -215,23 +200,21 @@ export const AuthProvider = ({ children }) => {
         } else {
           toast.error(error.message);
         }
-        setLoading(false);
         return false;
       }
 
-      // Supabase sends emails regardless of whether the account exists (security best practice)
       toast.success('Password reset instructions sent to your email if an account exists with that email!');
-      setLoading(false);
       return true;
     } catch (err) {
       console.error('Forgot password error:', err);
       toast.error('An error occurred. Please try again.');
-      setLoading(false);
       throw err;
+    } finally {
+      setLoading(false);
     }
-  };
+  }, []);
 
-  const logout = async () => {
+  const logout = useCallback(async () => {
     setLoading(true);
     try {
       const { error } = await supabase.auth.signOut();
@@ -240,9 +223,10 @@ export const AuthProvider = ({ children }) => {
         toast.error(error.message);
       } else {
         setUser(null);
-        localStorage.removeItem('pulsar_user');
+        // Only remove our own localStorage items, NOT Supabase's auth storage
         localStorage.removeItem('pulsar_remember_me');
         toast.success('Logged out successfully');
+        navigate('/');
       }
     } catch (err) {
       console.error('Logout error:', err);
@@ -250,9 +234,9 @@ export const AuthProvider = ({ children }) => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [navigate]);
 
-  const updateProfile = async (data) => {
+  const updateProfile = useCallback(async (data) => {
     if (!user) {
       toast.error('No active user session');
       return false;
@@ -275,33 +259,33 @@ export const AuthProvider = ({ children }) => {
 
       if (error) {
         toast.error(error.message);
-        setLoading(false);
         return false;
       }
 
-      const updatedUserObj = createUserObject({ user: updatedUser.user }, theme);
-      setUser(updatedUserObj);
-      localStorage.setItem('pulsar_user', JSON.stringify(updatedUserObj));
+      // Get the updated session
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session) {
+        const updatedUserObj = createUserObject(session, theme);
+        setUser(updatedUserObj);
+      }
       toast.success('Profile updated successfully');
-      setLoading(false);
       return true;
     } catch (err) {
       console.error('Update profile error:', err);
       toast.error('An error occurred while updating profile');
-      setLoading(false);
       return false;
+    } finally {
+      setLoading(false);
     }
-  };
+  }, [user, theme]);
 
-  const updatePassword = async (current, newPass) => {
+  const updatePassword = useCallback(async (current, newPass) => {
     setLoading(true);
     try {
-      // Get current session to see if we're in a recovery flow
       const { data: { session } } = await supabase.auth.getSession();
       
       if (!session) {
         toast.error('No active session. Please sign in first.');
-        setLoading(false);
         return false;
       }
 
@@ -315,26 +299,24 @@ export const AuthProvider = ({ children }) => {
         } else {
           toast.error(error.message);
         }
-        setLoading(false);
         return false;
       }
 
       toast.success('Password changed successfully');
-      setLoading(false);
       return true;
     } catch (err) {
       console.error('Update password error:', err);
       toast.error('An error occurred while updating password');
-      setLoading(false);
       return false;
+    } finally {
+      setLoading(false);
     }
-  };
+  }, []);
 
-  const deleteAccount = () => {
+  const deleteAccount = useCallback(() => {
     setUser(null);
-    localStorage.removeItem('pulsar_user');
     toast.success('Account permanently deleted (Simulated)');
-  };
+  }, []);
 
   return (
     <AuthContext.Provider value={{

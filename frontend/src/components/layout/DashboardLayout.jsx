@@ -61,7 +61,7 @@ export default function DashboardLayout({ children }) {
       <div className="flex-1 flex flex-col min-w-0">
         
         {/* Top Header Navbar */}
-        <header className="h-16 border-b border-[#1f1f23] bg-[#0a0a0c]/60 backdrop-blur-md px-6 flex items-center justify-between sticky top-0 z-30">
+        <header className="h-16 border-b border-[#1f1f23] bg-[#0a0a0c]/60 backdrop-blur-md px-4 sm:px-6 md:px-8 flex items-center justify-between sticky top-0 z-30">
           <div className="flex items-center gap-4">
             {/* Mobile Hamburger menu */}
             <button 
@@ -105,10 +105,10 @@ export default function DashboardLayout({ children }) {
 
         {/* Dynamic Route Content */}
         <main className="flex-1 overflow-y-auto p-4 sm:p-6 md:p-8 bg-grid-pattern relative">
-          <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-indigo-600/5 rounded-full blur-[120px] pointer-events-none" />
-          <div className="absolute bottom-0 right-1/4 w-[400px] h-[400px] bg-purple-600/5 rounded-full blur-[100px] pointer-events-none" />
+          <div className="absolute top-0 left-1/4 w-[300px] h-[300px] sm:w-[500px] sm:h-[500px] bg-indigo-600/5 rounded-full blur-[120px] pointer-events-none" />
+          <div className="absolute bottom-0 right-1/4 w-[250px] h-[250px] sm:w-[400px] sm:h-[400px] bg-purple-600/5 rounded-full blur-[100px] pointer-events-none" />
           
-          <div className="max-w-6xl mx-auto w-full relative z-10">
+          <div className="w-full max-w-6xl mx-auto relative z-10">
             {children}
           </div>
         </main>

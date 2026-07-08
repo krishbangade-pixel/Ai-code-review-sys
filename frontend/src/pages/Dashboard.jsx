@@ -48,7 +48,7 @@ export default function Dashboard() {
       </div>
 
       {/* Grid of Stats Cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         
         {/* Total Reviews Card */}
         <motion.div 
@@ -160,7 +160,7 @@ export default function Dashboard() {
               >
                 <div>
                   <div className="flex items-center justify-between">
-                    <span className="text-[10px] font-semibold text-[#6b7280] font-mono">{rev.id}</span>
+                    <span className="text-[10px] font-semibold text-[#6b7280] font-mono truncate max-w-[120px]">{rev.project_name || 'Untitled Review'}</span>
                     <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${
                       (rev.overall_score || 0) >= 85 ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' :
                       (rev.overall_score || 0) >= 70 ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20' :

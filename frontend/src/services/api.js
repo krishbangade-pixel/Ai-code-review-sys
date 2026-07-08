@@ -10,7 +10,7 @@ function requireValidUserId(userId) {
   }
 }
 
-export async function reviewCode(code, userId) {
+export async function reviewCode(code, userId, projectName) {
   requireValidUserId(userId);
 
   const response = await fetch(`${API_BASE_URL}/api/review/code`, {
@@ -18,7 +18,7 @@ export async function reviewCode(code, userId) {
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ code, user_id: userId }),
+    body: JSON.stringify({ code, user_id: userId, projectName }),
   });
 
   if (!response.ok) {
@@ -30,12 +30,15 @@ export async function reviewCode(code, userId) {
   return data.review;
 }
 
-export async function reviewFiles(files, userId) {
+export async function reviewFiles(files, userId, projectName) {
   requireValidUserId(userId);
 
   const formData = new FormData();
   files.forEach((file) => formData.append('files', file));
   formData.append('user_id', userId);
+  if (projectName) {
+    formData.append('projectName', projectName);
+  }
 
   const response = await fetch(`${API_BASE_URL}/api/review/upload`, {
     method: 'POST',
@@ -51,7 +54,7 @@ export async function reviewFiles(files, userId) {
   return data.review;
 }
 
-export async function reviewGithubRepo(repoUrl, userId) {
+export async function reviewGithubRepo(repoUrl, userId, projectName) {
   requireValidUserId(userId);
 
   const response = await fetch(`${API_BASE_URL}/api/review/github`, {
@@ -59,7 +62,7 @@ export async function reviewGithubRepo(repoUrl, userId) {
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ repo_url: repoUrl, user_id: userId }),
+    body: JSON.stringify({ repo_url: repoUrl, user_id: userId, projectName }),
   });
 
   if (!response.ok) {

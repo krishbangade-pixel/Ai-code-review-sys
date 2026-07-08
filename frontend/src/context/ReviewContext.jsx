@@ -61,7 +61,7 @@ export const ReviewProvider = ({ children }) => {
     fetchReviews();
   }, [fetchReviews]);
 
-  const addReviewCode = async (code) => {
+  const addReviewCode = async (code, projectName) => {
     const authenticatedUserId = await getAuthenticatedUserId();
 
     if (!authenticatedUserId) {
@@ -73,7 +73,7 @@ export const ReviewProvider = ({ children }) => {
     toast.loading('Analyzing your code...', { id: 'analyzing-toast' });
 
     try {
-      const newReview = await reviewCode(code, authenticatedUserId);
+      const newReview = await reviewCode(code, authenticatedUserId, projectName);
       setReviews((prev) => [newReview, ...prev]);
       toast.success('Code review complete!', { id: 'analyzing-toast' });
       return newReview.id;
@@ -86,7 +86,7 @@ export const ReviewProvider = ({ children }) => {
     }
   };
 
-  const addReviewFiles = async (files) => {
+  const addReviewFiles = async (files, projectName) => {
     const authenticatedUserId = await getAuthenticatedUserId();
 
     if (!authenticatedUserId) {
@@ -98,7 +98,7 @@ export const ReviewProvider = ({ children }) => {
     toast.loading('Analyzing your files...', { id: 'analyzing-toast' });
 
     try {
-      const newReview = await reviewFiles(files, authenticatedUserId);
+      const newReview = await reviewFiles(files, authenticatedUserId, projectName);
       setReviews((prev) => [newReview, ...prev]);
       toast.success('Files reviewed!', { id: 'analyzing-toast' });
       return newReview.id;
@@ -111,7 +111,7 @@ export const ReviewProvider = ({ children }) => {
     }
   };
 
-  const addReviewGithub = async (repoUrl) => {
+  const addReviewGithub = async (repoUrl, projectName) => {
     const authenticatedUserId = await getAuthenticatedUserId();
 
     if (!authenticatedUserId) {
@@ -123,7 +123,7 @@ export const ReviewProvider = ({ children }) => {
     toast.loading('Cloning and analyzing repository...', { id: 'analyzing-toast' });
 
     try {
-      const newReview = await reviewGithubRepo(repoUrl, authenticatedUserId);
+      const newReview = await reviewGithubRepo(repoUrl, authenticatedUserId, projectName);
       setReviews((prev) => [newReview, ...prev]);
       toast.success('Repository reviewed!', { id: 'analyzing-toast' });
       return newReview.id;

@@ -46,11 +46,25 @@
   background: #2f2f35;
 }
 
+/* Prevent horizontal overflow */
+html, 
+body, 
+#root {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
 body {
   background-color: #030303;
   color: #f3f4f6;
   font-family: var(--font-sans);
-  overflow-x: hidden;
+}
+
+/* Responsive images */
+img {
+  max-width: 100%;
+  height: auto;
 }
 
 /* Grid background pattern */
@@ -80,4 +94,5 @@ body {
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 8px;
   overflow: hidden;
+  width: 100%;
 }

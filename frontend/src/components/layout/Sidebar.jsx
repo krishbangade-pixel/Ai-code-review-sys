@@ -203,7 +203,7 @@ export default function Sidebar({ isMobileOpen, setIsMobileOpen }) {
               animate={{ x: 0 }}
               exit={{ x: '-100%' }}
               transition={{ type: 'tween', duration: 0.3 }}
-              className="md:hidden fixed inset-y-0 left-0 w-[270px] z-50 shadow-2xl"
+              className="md:hidden fixed inset-y-0 left-0 w-[85vw] max-w-[270px] z-50 shadow-2xl"
             >
               <SidebarContent />
             </motion.div>

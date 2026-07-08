@@ -94,8 +94,8 @@ export default function Landing() {
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <ElegantShape
           delay={0.3}
-          width={600}
-          height={140}
+          width={300}
+          height={70}
           rotate={12}
           gradient="from-indigo-500/[0.15]"
           className="left-[-10%] md:left-[-5%] top-[15%] md:top-[20%]"
@@ -103,8 +103,8 @@ export default function Landing() {
 
         <ElegantShape
           delay={0.5}
-          width={500}
-          height={120}
+          width={250}
+          height={60}
           rotate={-15}
           gradient="from-rose-500/[0.15]"
           className="right-[-5%] md:right-[0%] top-[70%] md:top-[75%]"
@@ -112,8 +112,8 @@ export default function Landing() {
 
         <ElegantShape
           delay={0.4}
-          width={300}
-          height={80}
+          width={150}
+          height={40}
           rotate={-8}
           gradient="from-violet-500/[0.15]"
           className="left-[5%] md:left-[10%] bottom-[5%] md:bottom-[10%]"
@@ -121,8 +121,8 @@ export default function Landing() {
 
         <ElegantShape
           delay={0.6}
-          width={200}
-          height={60}
+          width={100}
+          height={30}
           rotate={20}
           gradient="from-amber-500/[0.15]"
           className="right-[15%] md:right-[20%] top-[10%] md:top-[15%]"
@@ -130,8 +130,8 @@ export default function Landing() {
 
         <ElegantShape
           delay={0.7}
-          width={150}
-          height={40}
+          width={80}
+          height={20}
           rotate={-25}
           gradient="from-cyan-500/[0.15]"
           className="left-[20%] md:left-[25%] top-[5%] md:top-[10%]"
@@ -139,9 +139,9 @@ export default function Landing() {
       </div>
 
       {/* Header Bar */}
-      <header className="relative z-20 w-full px-6 py-5 flex items-center justify-between max-w-7xl mx-auto">
-        <div className="flex items-center gap-2">
-          <div className="w-9 h-9 rounded-xl bg-indigo-600/10 border border-indigo-500/30 flex items-center justify-center text-indigo-400">
+      <header className="relative z-20 w-full px-4 sm:px-6 py-5 flex items-center justify-between">
+        <div className="flex items-center gap-2 min-w-0">
+          <div className="w-9 h-9 rounded-xl bg-indigo-600/10 border border-indigo-500/30 flex items-center justify-center text-indigo-400 flex-shrink-0">
             <Cpu size={18} className="animate-pulse" />
           </div>
           <span className="font-bold text-white tracking-tight text-lg">Pulsar<span className="text-indigo-400">AI</span></span>
@@ -237,7 +237,7 @@ export default function Landing() {
       </div>
 
       {/* Footer bar */}
-      <footer className="relative z-20 w-full px-6 py-6 text-center text-[10px] text-white/30 border-t border-white/[0.02] max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+      <footer className="relative z-20 w-full px-4 sm:px-6 py-6 text-center text-[10px] text-white/30 border-t border-white/[0.02] flex flex-col sm:flex-row items-center justify-between gap-4">
         <span>© 2026 PulsarAI Labs Inc. All rights reserved.</span>
         <div className="flex gap-4">
           <a href="#" className="hover:text-white/60 transition-colors">Privacy Policy</a>

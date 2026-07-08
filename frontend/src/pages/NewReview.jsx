@@ -24,6 +24,9 @@ export default function NewReview() {
 
   const [activeTab, setActiveTab] = useState('paste');
 
+  // Project Name State
+  const [projectName, setProjectName] = useState('');
+
   // Paste Code Tab State
   const [codeValue, setCodeValue] = useState('');
 
@@ -42,13 +45,13 @@ export default function NewReview() {
         toast.error('Please write or paste code for auditing');
         return;
       }
-      reviewId = await addReviewCode(codeValue);
+      reviewId = await addReviewCode(codeValue, projectName);
     } else if (activeTab === 'upload') {
       if (files.length === 0) {
         toast.error('Please select or drop files to upload');
         return;
       }
-      reviewId = await addReviewFiles(files);
+      reviewId = await addReviewFiles(files, projectName);
     } else if (activeTab === 'github') {
       const gitRegex =
         /^https?:\/\/(www\.)?github\.com\/[a-zA-Z0-9_-]+\/[a-zA-Z0-9_-]+(\/)?$/;
@@ -56,7 +59,7 @@ export default function NewReview() {
         toast.error('Please enter a valid public GitHub Repository URL');
         return;
       }
-      reviewId = await addReviewGithub(repoUrl);
+      reviewId = await addReviewGithub(repoUrl, projectName);
     }
 
     if (reviewId) {
@@ -102,11 +105,32 @@ export default function NewReview() {
         </p>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8">
         {/* Code Input Area (2/3 width) */}
         <div className="lg:col-span-2 space-y-6">
+          {/* Project Name Input */}
+          <div className="glass-panel p-6 rounded-2xl border border-[#1f1f23] space-y-3">
+            <label
+              className="block text-xs font-semibold text-[#9ca3af] uppercase tracking-wider"
+              htmlFor="projectName"
+            >
+              Project Name (Optional)
+            </label>
+            <input
+              id="projectName"
+              type="text"
+              placeholder="Enter project name..."
+              value={projectName}
+              onChange={(e) => setProjectName(e.target.value)}
+              className="w-full px-4 py-2.5 rounded-xl border border-[#1f1f23] bg-[#0c0c0e]/80 text-white placeholder-[#4b5563] text-sm focus:border-indigo-500/80 focus:ring-1 focus:ring-indigo-500/80 outline-none transition-all"
+            />
+            <p className="text-[10px] text-[#6b7280]">
+              Give your review a friendly name (defaults to "Untitled Review" if left empty)
+            </p>
+          </div>
+
           {/* Method tabs */}
-          <div className="flex border-b border-[#1f1f23] p-1 gap-2 bg-[#0a0a0c]/60 rounded-xl max-w-md">
+          <div className="flex border-b border-[#1f1f23] p-1 gap-2 bg-[#0a0a0c]/60 rounded-xl w-full max-w-md">
             <button
               onClick={() => setActiveTab('paste')}
               className={`flex-1 flex items-center justify-center gap-2 py-2 text-xs font-semibold rounded-lg transition-all cursor-pointer ${
@@ -212,7 +236,7 @@ export default function NewReview() {
                         >
                           <div className="flex items-center gap-2 text-white font-medium">
                             <File size={14} className="text-indigo-400" />
-                            <span className="truncate max-w-[200px] sm:max-w-[400px]">
+                            <span className="truncate max-w-[100px] sm:max-w-[200px] md:max-w-[400px]">
                               {file.name}
                             </span>
                             <span className="text-[10px] text-[#6b7280]">
@@ -246,8 +270,8 @@ export default function NewReview() {
                   >
                     Public GitHub Repository URL
                   </label>
-                  <div className="relative max-w-lg">
-                    <span className="absolute inset-y-0 left-0 pl-3.5 flex items-center text-[#6b7280]">
+                  <div className="relative w-full max-w-full">
+                    <span className="absolute inset-y-0 left-0 pl-3.5 flex items-center text-[#6b7280] pointer-events-none">
                       <Github size={16} />
                     </span>
                     <input
@@ -256,7 +280,7 @@ export default function NewReview() {
                       placeholder="https://github.com/username/repository"
                       value={repoUrl}
                       onChange={(e) => setRepoUrl(e.target.value)}
-                      className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-[#1f1f23] bg-[#0c0c0e]/80 text-white placeholder-[#4b5563] text-sm focus:border-indigo-500/80 focus:ring-1 focus:ring-indigo-500/80 outline-none transition-all"
+                      className="w-full max-w-full pl-10 pr-4 py-2.5 rounded-xl border border-[#1f1f23] bg-[#0c0c0e]/80 text-white placeholder-[#4b5563] text-xs sm:text-sm focus:border-indigo-500/80 focus:ring-1 focus:ring-indigo-500/80 outline-none transition-all"
                     />
                   </div>
                   <p className="text-[10px] text-[#6b7280] mt-1.5">
@@ -276,7 +300,7 @@ export default function NewReview() {
               <button
                 onClick={handleRunAnalysis}
                 disabled={analyzing}
-                className="px-6 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 disabled:bg-indigo-600/50 text-white font-semibold text-xs tracking-wider transition-all shadow-md shadow-indigo-600/20 flex items-center gap-1.5 cursor-pointer"
+                className="px-4 sm:px-6 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 disabled:bg-indigo-600/50 text-white font-semibold text-xs tracking-wider transition-all shadow-md shadow-indigo-600/20 flex items-center gap-1.5 cursor-pointer"
               >
                 {analyzing ? (
                   <>

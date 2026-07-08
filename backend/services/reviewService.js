@@ -9,7 +9,7 @@ const fs = require('fs-extra');
 const path = require('path');
 
 const reviewService = {
-  async reviewCode(code, userId) {
+  async reviewCode(code, userId, projectName) {
     console.log('[reviewService] Starting code review for user:', userId);
     const tempDir = await fileUtils.createTempDir();
 
@@ -39,6 +39,7 @@ const reviewService = {
         metrics: metrics,
         ai_review: aiReview,
         overall_score: aiReview.overallScore,
+        project_name: projectName && projectName.trim() ? projectName.trim() : 'Untitled Review',
         status: 'completed'
       };
 
@@ -54,7 +55,7 @@ const reviewService = {
     }
   },
 
-  async reviewFiles(files, userId) {
+  async reviewFiles(files, userId, projectName) {
     console.log('[reviewService] Starting file review for user:', userId, 'with', files.length, 'files');
     const tempDir = await fileUtils.createTempDir();
 
@@ -93,6 +94,7 @@ const reviewService = {
         metrics: metrics,
         ai_review: aiReview,
         overall_score: aiReview.overallScore,
+        project_name: projectName && projectName.trim() ? projectName.trim() : 'Untitled Review',
         status: 'completed'
       };
 
@@ -108,7 +110,7 @@ const reviewService = {
     }
   },
 
-  async reviewGitHubRepo(repoUrl, userId) {
+  async reviewGitHubRepo(repoUrl, userId, projectName) {
     console.log('[reviewService] Starting GitHub repository review for user:', userId, 'repo:', repoUrl);
     let tempDir;
 
@@ -145,6 +147,7 @@ const reviewService = {
         metrics: metrics,
         ai_review: aiReview,
         overall_score: aiReview.overallScore,
+        project_name: projectName && projectName.trim() ? projectName.trim() : repoUrl,
         status: 'completed'
       };
 

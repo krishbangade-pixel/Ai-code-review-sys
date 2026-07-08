@@ -10,7 +10,7 @@ const reviewController = {
     console.log('==============================\n');
 
     try {
-      const { code, user_id } = req.body;
+      const { code, user_id, projectName } = req.body;
 
       if (!code) {
         return res.status(400).json({
@@ -24,7 +24,7 @@ const reviewController = {
         });
       }
 
-      const review = await reviewService.reviewCode(code, user_id);
+      const review = await reviewService.reviewCode(code, user_id, projectName);
 
       console.log('✅ Review created successfully');
 
@@ -62,7 +62,7 @@ const reviewController = {
     console.log('==============================\n');
 
     try {
-      const { user_id } = req.body;
+      const { user_id, projectName } = req.body;
       const files = req.files;
 
       if (!files || files.length === 0) {
@@ -77,7 +77,7 @@ const reviewController = {
         });
       }
 
-      const review = await reviewService.reviewFiles(files, user_id);
+      const review = await reviewService.reviewFiles(files, user_id, projectName);
 
       console.log('✅ Upload review completed');
 
@@ -113,7 +113,7 @@ const reviewController = {
     console.log('==============================\n');
 
     try {
-      const { repo_url, user_id } = req.body;
+      const { repo_url, user_id, projectName } = req.body;
 
       if (!repo_url) {
         return res.status(400).json({
@@ -127,7 +127,7 @@ const reviewController = {
         });
       }
 
-      const review = await reviewService.reviewGitHubRepo(repo_url, user_id);
+      const review = await reviewService.reviewGitHubRepo(repo_url, user_id, projectName);
 
       console.log('✅ GitHub review completed');
 
