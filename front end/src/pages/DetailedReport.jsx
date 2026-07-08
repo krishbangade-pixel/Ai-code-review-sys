@@ -19,8 +19,16 @@ export default function DetailedReport() {
       if (!user?.id) return;
       try {
         setLoading(true);
-        const data = await getReviewById(id, user.id);
-        setReview(data.review);
+        const reviewData = await getReviewById(id, user.id);
+
+        console.log('Fetched Review:', reviewData);
+
+        if (!reviewData) {
+          setReview(null);
+          return;
+        }
+
+        setReview(reviewData);
       } catch (error) {
         console.error('Failed to fetch review:', error);
         toast.error('Failed to load review');
@@ -103,7 +111,11 @@ export default function DetailedReport() {
     }
   };
 
-  const score = review.overall_score || 0;
+  const overallScore = review.overallScore ?? review.overall_score ?? 0;
+  const createdAt = review.createdAt ?? review.created_at;
+  const aiReview = review.aiReview ?? review.ai_review;
+  const staticAnalysisResult = review.staticAnalysis ?? review.static_analysis;
+  const score = overallScore;
 
   return (
     <div className="space-y-8 pb-12">
@@ -120,7 +132,7 @@ export default function DetailedReport() {
             <div className="flex items-center gap-2">
               <span className="text-xs font-semibold text-indigo-400 font-mono uppercase tracking-wider">{review.id}</span>
               <span className="w-1 h-1 rounded-full bg-[#1f1f23]" />
-              <span className="text-xs text-[#6b7280]">Created {new Date(review.created_at).toLocaleDateString()}</span>
+              <span className="text-xs text-[#6b7280]">Created {new Date(createdAt).toLocaleDateString()}</span>
             </div>
             <h2 className="text-2xl font-bold tracking-tight text-white m-0 mt-0.5">
               {review.type === 'github' ? review.repo_url : review.type === 'upload' ? 'File Upload Review' : 'Code Review'}
@@ -220,25 +232,25 @@ export default function DetailedReport() {
       </div>
 
       {/* AI Summary Section */}
-      {review.ai_review?.summary && (
+      {aiReview?.summary && (
         <div className="glass-panel p-6 rounded-2xl border border-[#1f1f23] space-y-3">
           <div className="flex items-center gap-2">
             <div className="w-2.5 h-2.5 rounded-full bg-indigo-500 animate-pulse" />
             <h3 className="text-xs font-bold text-white uppercase tracking-wider m-0">AI Code Summary & Verdict</h3>
           </div>
           <p className="text-sm text-[#9ca3af] leading-relaxed">
-            {review.ai_review.summary}
+            {aiReview.summary}
           </p>
         </div>
       )}
 
       {/* Static Analysis Section */}
-      {review.static_analysis && review.static_analysis.length > 0 && (
+      {staticAnalysisResult && staticAnalysisResult.length > 0 && (
         <div className="space-y-6">
           <h3 className="text-sm font-bold text-white uppercase tracking-wider m-0">ESLint Static Analysis</h3>
 
           <div className="space-y-4">
-            {review.static_analysis.map((file, fileIdx) => (
+            {staticAnalysisResult.map((file, fileIdx) => (
               <div key={fileIdx} className="glass-panel rounded-2xl border border-[#1f1f23] overflow-hidden">
                 <div className="p-5 border-b border-[#1f1f23] flex items-center justify-between bg-[#0a0a0c]/80">
                   <div>
@@ -288,18 +300,18 @@ export default function DetailedReport() {
       )}
 
       {/* AI Issues Section */}
-      {review.ai_review && (
+      {aiReview && (
         <div className="space-y-6">
           <h3 className="text-sm font-bold text-white uppercase tracking-wider m-0">AI Analysis Results</h3>
 
           {/* Bugs */}
-          {review.ai_review.bugs && review.ai_review.bugs.length > 0 && (
+          {aiReview.bugs && aiReview.bugs.length > 0 && (
             <div className="space-y-4">
               <h4 className="text-sm font-semibold text-rose-400 flex items-center gap-2">
                 <Bug size={16} />
-                Bugs ({review.ai_review.bugs.length})
+                Bugs ({aiReview.bugs.length})
               </h4>
-              {review.ai_review.bugs.map((bug, idx) => {
+              {aiReview.bugs.map((bug, idx) => {
                 const styles = getSeverityStyles(bug.severity);
                 return (
                   <div key={idx} className="glass-panel rounded-2xl border border-[#1f1f23] overflow-hidden">
@@ -336,13 +348,13 @@ export default function DetailedReport() {
           )}
 
           {/* Code Smells */}
-          {review.ai_review.codeSmells && review.ai_review.codeSmells.length > 0 && (
+          {aiReview.codeSmells && aiReview.codeSmells.length > 0 && (
             <div className="space-y-4">
               <h4 className="text-sm font-semibold text-amber-400 flex items-center gap-2">
                 <AlertTriangle size={16} />
-                Code Smells ({review.ai_review.codeSmells.length})
+                Code Smells ({aiReview.codeSmells.length})
               </h4>
-              {review.ai_review.codeSmells.map((smell, idx) => {
+              {aiReview.codeSmells.map((smell, idx) => {
                 const styles = getSeverityStyles(smell.severity);
                 return (
                   <div key={idx} className="glass-panel p-5 rounded-2xl border border-[#1f1f23]">
@@ -359,13 +371,13 @@ export default function DetailedReport() {
           )}
 
           {/* Security Recommendations */}
-          {review.ai_review.securityRecommendations && review.ai_review.securityRecommendations.length > 0 && (
+          {aiReview.securityRecommendations && aiReview.securityRecommendations.length > 0 && (
             <div className="space-y-4">
               <h4 className="text-sm font-semibold text-purple-400 flex items-center gap-2">
                 <ShieldAlert size={16} />
-                Security Recommendations ({review.ai_review.securityRecommendations.length})
+                Security Recommendations ({aiReview.securityRecommendations.length})
               </h4>
-              {review.ai_review.securityRecommendations.map((rec, idx) => {
+              {aiReview.securityRecommendations.map((rec, idx) => {
                 const styles = getSeverityStyles(rec.severity);
                 return (
                   <div key={idx} className="glass-panel p-5 rounded-2xl border border-[#1f1f23]">
@@ -382,13 +394,13 @@ export default function DetailedReport() {
           )}
 
           {/* Performance Improvements */}
-          {review.ai_review.performanceImprovements && review.ai_review.performanceImprovements.length > 0 && (
+          {aiReview.performanceImprovements && aiReview.performanceImprovements.length > 0 && (
             <div className="space-y-4">
               <h4 className="text-sm font-semibold text-cyan-400 flex items-center gap-2">
                 <Zap size={16} />
-                Performance Improvements ({review.ai_review.performanceImprovements.length})
+                Performance Improvements ({aiReview.performanceImprovements.length})
               </h4>
-              {review.ai_review.performanceImprovements.map((imp, idx) => {
+              {aiReview.performanceImprovements.map((imp, idx) => {
                 const styles = getSeverityStyles(imp.severity);
                 return (
                   <div key={idx} className="glass-panel p-5 rounded-2xl border border-[#1f1f23]">
@@ -405,13 +417,13 @@ export default function DetailedReport() {
           )}
 
           {/* Best Practices */}
-          {review.ai_review.bestPractices && review.ai_review.bestPractices.length > 0 && (
+          {aiReview.bestPractices && aiReview.bestPractices.length > 0 && (
             <div className="space-y-4">
               <h4 className="text-sm font-semibold text-emerald-400 flex items-center gap-2">
                 <Info size={16} />
-                Best Practices ({review.ai_review.bestPractices.length})
+                Best Practices ({aiReview.bestPractices.length})
               </h4>
-              {review.ai_review.bestPractices.map((bp, idx) => {
+              {aiReview.bestPractices.map((bp, idx) => {
                 const styles = getSeverityStyles(bp.severity);
                 return (
                   <div key={idx} className="glass-panel p-5 rounded-2xl border border-[#1f1f23]">

@@ -1,13 +1,13 @@
 
 # AI Code Review System
 
-A full-stack AI-powered code review platform built with React, Node.js, Express, Supabase, and OpenAI.
+A full-stack AI-powered code review platform built with React, Node.js, Express, Supabase, and Google Gemini.
 
 ## Features
 
 - **Static Analysis**: ESLint integration for syntax errors, unused variables, and coding standard violations
 - **Code Metrics**: Cyclomatic complexity, lines of code, number of functions/classes, and more
-- **AI Reviews**: OpenAI integration for intelligent code analysis, bug detection, security recommendations, and refactoring suggestions
+- **AI Reviews**: Google Gemini integration for intelligent code analysis, bug detection, security recommendations, and refactoring suggestions
 - **Multiple Input Methods**:
   - Paste code directly
   - Upload JavaScript/JSX files
@@ -56,7 +56,7 @@ Ai code review system/
 PORT=3001
 SUPABASE_URL=your_supabase_project_url
 SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_role_key
-OPENAI_API_KEY=your_openai_api_key
+GEMINI_API_KEY=your_gemini_api_key
 NODE_ENV=development
 ```
 
@@ -79,7 +79,7 @@ VITE_API_BASE_URL=http://localhost:3001
 - Node.js
 - Express.js
 - Supabase (database + auth)
-- OpenAI API
+- Google Gemini API
 - ESLint (static analysis)
 - Espree (AST parsing)
 - Simple-git (repo cloning)

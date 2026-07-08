@@ -57,6 +57,13 @@ app.listen(config.port, () => {
   console.log('🚀 AI Code Review Backend Started');
   console.log(`🌍 URL : http://localhost:${config.port}`);
   console.log(`📦 Mode: ${config.nodeEnv}`);
+  try {
+    const fs = require('fs');
+    const stats = fs.statSync(require.resolve('./services/geminiService'));
+    console.log('⚙️  geminiService.js mtime:', stats.mtime.toISOString());
+  } catch (e) {
+    console.warn('Could not stat geminiService.js to verify running file');
+  }
   console.log('========================================');
   console.log('');
 });

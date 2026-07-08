@@ -5,20 +5,25 @@ const config = require('../config');
 const supabase = createClient(config.supabase.url, config.supabase.serviceRoleKey);
 
 const transformReviewForFrontend = (review) => {
-  // Transform overallScore to overallScore, etc.
   return {
     ...review,
     id: review.id.toString(), // Convert bigint to string for frontend
     overallScore: review.overall_score,
+    overall_score: review.overall_score,
     createdAt: review.created_at,
+    created_at: review.created_at,
     aiReview: review.ai_review,
-    staticAnalysis: review.static_analysis
+    ai_review: review.ai_review,
+    staticAnalysis: review.static_analysis,
+    static_analysis: review.static_analysis,
+    metrics: review.metrics
   };
 };
 
 const supabaseService = {
   async saveReview(reviewData) {
     console.log('[supabaseService] Saving review to database...');
+    console.log('[supabaseService] Payload:', JSON.stringify(reviewData, null, 2));
     const { data, error } = await supabase
       .from('reviews')
       .insert([reviewData])

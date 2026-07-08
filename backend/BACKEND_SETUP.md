@@ -4,7 +4,7 @@
 ## Prerequisites
 - Node.js (v16 or higher)
 - Supabase account and project
-- OpenAI API key
+- Google Gemini API key
 
 ## Step 1: Supabase Setup
 
@@ -53,7 +53,7 @@ Copy `.env` file and update with your credentials:
 PORT=3001
 SUPABASE_URL=your_supabase_project_url
 SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_role_key
-OPENAI_API_KEY=your_openai_api_key
+GEMINI_API_KEY=your_gemini_api_key
 NODE_ENV=development
 ```
 

@@ -1,7 +1,7 @@
 
 const eslintService = require('./eslintService');
 const metricsService = require('./metricsService');
-const openAiService = require('./openAiService');
+const geminiService = require('./geminiService');
 const fileUtils = require('../utils/fileUtils');
 const gitService = require('./gitService');
 const supabaseService = require('./supabaseService');
@@ -20,8 +20,16 @@ const reviewService = {
       console.log('[reviewService] Calculating metrics...');
       const metrics = await metricsService.analyzeCode(code);
 
-      console.log('[reviewService] Performing AI review...');
-      const aiReview = await openAiService.performReview(code, staticAnalysis, metrics);
+      console.log('[reviewService] Performing AI review (Gemini)...');
+      console.log('[reviewService] Calling geminiService.performReview with code length:', code?.length || 0);
+      let aiReview;
+      try {
+        aiReview = await geminiService.performReview(code, staticAnalysis, metrics);
+        console.log('[reviewService] Received aiReview from Gemini:', JSON.stringify(aiReview, null, 2));
+      } catch (err) {
+        console.error('[reviewService] Error from geminiService.performReview:', err && err.stack ? err.stack : err);
+        throw err;
+      }
 
       const reviewData = {
         user_id: userId,
@@ -34,7 +42,7 @@ const reviewService = {
         status: 'completed'
       };
 
-      console.log('[reviewService] Saving review to database...');
+      console.log('[reviewService] Saving reviewData to Supabase:', JSON.stringify(reviewData, null, 2));
       const savedReview = await supabaseService.saveReview(reviewData);
       console.log('[reviewService] Code review complete!');
       return savedReview;
@@ -73,8 +81,8 @@ const reviewService = {
       const fileContents = await fileUtils.readFiles(jsFiles);
       const combinedCode = fileUtils.combineCode(fileContents);
 
-      console.log('[reviewService] Performing AI review...');
-      const aiReview = await openAiService.performReview(combinedCode, staticAnalysis, metrics);
+      console.log('[reviewService] Performing AI review (Gemini)...');
+      const aiReview = await geminiService.performReview(combinedCode, staticAnalysis, metrics);
 
       const reviewData = {
         user_id: userId,
@@ -124,8 +132,8 @@ const reviewService = {
 
       const combinedCode = fileUtils.combineCode(files);
 
-      console.log('[reviewService] Performing AI review...');
-      const aiReview = await openAiService.performReview(combinedCode, staticAnalysis, metrics);
+      console.log('[reviewService] Performing AI review (Gemini)...');
+      const aiReview = await geminiService.performReview(combinedCode, staticAnalysis, metrics);
 
       const reviewData = {
         user_id: userId,
