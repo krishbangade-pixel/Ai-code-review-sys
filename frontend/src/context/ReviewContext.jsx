@@ -2,6 +2,7 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { useAuth } from './AuthContext';
 import toast from 'react-hot-toast';
+import { supabase } from '../lib/supabase';
 import {
   reviewCode,
   reviewFiles,
@@ -11,12 +12,23 @@ import {
 } from '../services/api';
 
 const ReviewContext = createContext(null);
+const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
 export const ReviewProvider = ({ children }) => {
   const { user } = useAuth();
   const [reviews, setReviews] = useState([]);
   const [loading, setLoading] = useState(true);
   const [analyzing, setAnalyzing] = useState(false);
+
+  const getAuthenticatedUserId = useCallback(async () => {
+    const { data, error } = await supabase.auth.getUser();
+
+    if (error || !data?.user?.id || !UUID_REGEX.test(data.user.id)) {
+      return null;
+    }
+
+    return data.user.id;
+  }, []);
 
   const fetchReviews = useCallback(async () => {
     if (!user?.id) {
@@ -27,7 +39,14 @@ export const ReviewProvider = ({ children }) => {
 
     try {
       setLoading(true);
-      const data = await getReviews(user.id);
+      const authenticatedUserId = await getAuthenticatedUserId();
+
+      if (!authenticatedUserId) {
+        setReviews([]);
+        return;
+      }
+
+      const data = await getReviews(authenticatedUserId);
       setReviews(data);
     } catch (error) {
       console.error('Error fetching reviews:', error);
@@ -36,14 +55,16 @@ export const ReviewProvider = ({ children }) => {
     } finally {
       setLoading(false);
     }
-  }, [user?.id]);
+  }, [getAuthenticatedUserId, user?.id]);
 
   useEffect(() => {
     fetchReviews();
   }, [fetchReviews]);
 
   const addReviewCode = async (code) => {
-    if (!user?.id) {
+    const authenticatedUserId = await getAuthenticatedUserId();
+
+    if (!authenticatedUserId) {
       toast.error('You must be logged in to review code');
       return null;
     }
@@ -52,7 +73,7 @@ export const ReviewProvider = ({ children }) => {
     toast.loading('Analyzing your code...', { id: 'analyzing-toast' });
 
     try {
-      const newReview = await reviewCode(code, user.id);
+      const newReview = await reviewCode(code, authenticatedUserId);
       setReviews((prev) => [newReview, ...prev]);
       toast.success('Code review complete!', { id: 'analyzing-toast' });
       return newReview.id;
@@ -66,7 +87,9 @@ export const ReviewProvider = ({ children }) => {
   };
 
   const addReviewFiles = async (files) => {
-    if (!user?.id) {
+    const authenticatedUserId = await getAuthenticatedUserId();
+
+    if (!authenticatedUserId) {
       toast.error('You must be logged in to review code');
       return null;
     }
@@ -75,7 +98,7 @@ export const ReviewProvider = ({ children }) => {
     toast.loading('Analyzing your files...', { id: 'analyzing-toast' });
 
     try {
-      const newReview = await reviewFiles(files, user.id);
+      const newReview = await reviewFiles(files, authenticatedUserId);
       setReviews((prev) => [newReview, ...prev]);
       toast.success('Files reviewed!', { id: 'analyzing-toast' });
       return newReview.id;
@@ -89,7 +112,9 @@ export const ReviewProvider = ({ children }) => {
   };
 
   const addReviewGithub = async (repoUrl) => {
-    if (!user?.id) {
+    const authenticatedUserId = await getAuthenticatedUserId();
+
+    if (!authenticatedUserId) {
       toast.error('You must be logged in to review code');
       return null;
     }
@@ -98,7 +123,7 @@ export const ReviewProvider = ({ children }) => {
     toast.loading('Cloning and analyzing repository...', { id: 'analyzing-toast' });
 
     try {
-      const newReview = await reviewGithubRepo(repoUrl, user.id);
+      const newReview = await reviewGithubRepo(repoUrl, authenticatedUserId);
       setReviews((prev) => [newReview, ...prev]);
       toast.success('Repository reviewed!', { id: 'analyzing-toast' });
       return newReview.id;
@@ -112,10 +137,12 @@ export const ReviewProvider = ({ children }) => {
   };
 
   const deleteReview = async (id) => {
-    if (!user?.id) return;
+    const authenticatedUserId = await getAuthenticatedUserId();
+
+    if (!authenticatedUserId) return;
 
     try {
-      await deleteReviewApi(id, user.id);
+      await deleteReviewApi(id, authenticatedUserId);
       setReviews((prev) => prev.filter((r) => r.id !== id));
       toast.success('Review deleted');
     } catch (error) {

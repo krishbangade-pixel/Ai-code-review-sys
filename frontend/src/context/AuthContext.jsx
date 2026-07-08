@@ -60,31 +60,8 @@ export const AuthProvider = ({ children }) => {
           setUser(userObj);
           localStorage.setItem('pulsar_user', JSON.stringify(userObj));
         } else {
-          // Check for development mode flag as backup
-          const devMode = localStorage.getItem('pulsar_dev_mode') === 'true';
-          if (devMode) {
-            const testUser = {
-              id: 'dev-user',
-              email: 'dev@pulsar.ai',
-              name: 'Dev Tester',
-              avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=256&auto=format&fit=crop',
-              githubConnected: false,
-              credits: 100,
-              tier: 'Developer Pro',
-              notifications: {
-                emailAlerts: true,
-                weeklyDigest: false,
-                securityAlerts: true,
-              },
-              emailConfirmed: true,
-              themePreference: theme
-            };
-            setUser(testUser);
-            localStorage.setItem('pulsar_user', JSON.stringify(testUser));
-          } else {
-            setUser(null);
-            localStorage.removeItem('pulsar_user');
-          }
+          setUser(null);
+          localStorage.removeItem('pulsar_user');
         }
       } catch (err) {
         console.error('Error checking session:', err);
@@ -103,33 +80,9 @@ export const AuthProvider = ({ children }) => {
         setUser(userObj);
         localStorage.setItem('pulsar_user', JSON.stringify(userObj));
         
-        // Disable dev mode when real auth is active
-        localStorage.removeItem('pulsar_dev_mode');
       } else {
-        const devMode = localStorage.getItem('pulsar_dev_mode') === 'true';
-        if (devMode) {
-          const testUser = {
-            id: 'dev-user',
-            email: 'dev@pulsar.ai',
-            name: 'Dev Tester',
-            avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=256&auto=format&fit=crop',
-            githubConnected: false,
-            credits: 100,
-            tier: 'Developer Pro',
-            notifications: {
-              emailAlerts: true,
-              weeklyDigest: false,
-              securityAlerts: true,
-            },
-            emailConfirmed: true,
-            themePreference: theme
-          };
-          setUser(testUser);
-          localStorage.setItem('pulsar_user', JSON.stringify(testUser));
-        } else {
-          setUser(null);
-          localStorage.removeItem('pulsar_user');
-        }
+        setUser(null);
+        localStorage.removeItem('pulsar_user');
       }
       setLoading(false);
     });
@@ -289,7 +242,6 @@ export const AuthProvider = ({ children }) => {
         setUser(null);
         localStorage.removeItem('pulsar_user');
         localStorage.removeItem('pulsar_remember_me');
-        localStorage.removeItem('pulsar_dev_mode');
         toast.success('Logged out successfully');
       }
     } catch (err) {
@@ -384,34 +336,6 @@ export const AuthProvider = ({ children }) => {
     toast.success('Account permanently deleted (Simulated)');
   };
 
-  const toggleDevMode = (enabled) => {
-    if (enabled) {
-      localStorage.setItem('pulsar_dev_mode', 'true');
-      const testUser = {
-        name: 'Dev Tester',
-        email: 'dev@pulsar.ai',
-        avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=256&auto=format&fit=crop',
-        githubConnected: false,
-        credits: 100,
-        tier: 'Developer Pro',
-        notifications: {
-          emailAlerts: true,
-          weeklyDigest: false,
-          securityAlerts: true,
-        },
-        themePreference: theme
-      };
-      setUser(testUser);
-      localStorage.setItem('pulsar_user', JSON.stringify(testUser));
-      toast.success('Dev mode enabled - logged in as test user');
-    } else {
-      localStorage.setItem('pulsar_dev_mode', 'false');
-      setUser(null);
-      localStorage.removeItem('pulsar_user');
-      toast.success('Dev mode disabled');
-    }
-  };
-
   return (
     <AuthContext.Provider value={{
       user,
@@ -425,8 +349,7 @@ export const AuthProvider = ({ children }) => {
       updatePassword,
       deleteAccount,
       toggleTheme,
-      setTheme,
-      toggleDevMode
+      setTheme
     }}>
       {children}
     </AuthContext.Provider>

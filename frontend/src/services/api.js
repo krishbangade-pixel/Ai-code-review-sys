@@ -2,7 +2,17 @@
 const API_BASE_URL =
   import.meta.env.VITE_API_URL || 'https://ai-code-review-sys.onrender.com';
 
+const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+
+function requireValidUserId(userId) {
+  if (!UUID_REGEX.test(userId || '')) {
+    throw new Error('You must be logged in with a valid Supabase account');
+  }
+}
+
 export async function reviewCode(code, userId) {
+  requireValidUserId(userId);
+
   const response = await fetch(`${API_BASE_URL}/api/review/code`, {
     method: 'POST',
     headers: {
@@ -21,6 +31,8 @@ export async function reviewCode(code, userId) {
 }
 
 export async function reviewFiles(files, userId) {
+  requireValidUserId(userId);
+
   const formData = new FormData();
   files.forEach((file) => formData.append('files', file));
   formData.append('user_id', userId);
@@ -40,6 +52,8 @@ export async function reviewFiles(files, userId) {
 }
 
 export async function reviewGithubRepo(repoUrl, userId) {
+  requireValidUserId(userId);
+
   const response = await fetch(`${API_BASE_URL}/api/review/github`, {
     method: 'POST',
     headers: {
@@ -58,6 +72,8 @@ export async function reviewGithubRepo(repoUrl, userId) {
 }
 
 export async function getReviews(userId) {
+  requireValidUserId(userId);
+
   const response = await fetch(`${API_BASE_URL}/api/reviews?user_id=${encodeURIComponent(userId)}`, {
     method: 'GET',
   });
@@ -72,6 +88,8 @@ export async function getReviews(userId) {
 }
 
 export async function getReviewById(reviewId, userId) {
+  requireValidUserId(userId);
+
   const response = await fetch(`${API_BASE_URL}/api/reviews/${encodeURIComponent(reviewId)}?user_id=${encodeURIComponent(userId)}`, {
     method: 'GET',
   });
@@ -86,6 +104,8 @@ export async function getReviewById(reviewId, userId) {
 }
 
 export async function deleteReview(reviewId, userId) {
+  requireValidUserId(userId);
+
   const response = await fetch(`${API_BASE_URL}/api/reviews/${encodeURIComponent(reviewId)}`, {
     method: 'DELETE',
     headers: {

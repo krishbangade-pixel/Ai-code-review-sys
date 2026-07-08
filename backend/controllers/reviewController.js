@@ -161,6 +161,9 @@ const reviewController = {
     try {
 
       const { user_id } = req.query;
+      console.log('[reviewController] req.query.user_id:', req.query.user_id);
+      console.log('[reviewController] typeof req.query.user_id:', typeof req.query.user_id);
+      console.log('[reviewController] req.query.user_id.length:', req.query.user_id?.length);
 
       if (!user_id) {
         return res.status(400).json({
@@ -168,6 +171,7 @@ const reviewController = {
         });
       }
 
+      console.log('[reviewController] Passing user_id to supabaseService.getReviews:', user_id);
       const reviews = await supabaseService.getReviews(user_id);
 
       res.json({
@@ -180,10 +184,11 @@ const reviewController = {
       console.error(error);
       console.error(error.stack);
 
-      res.status(500).json({
+      res.status(error.statusCode || 500).json({
         success: false,
-        error: 'Failed to fetch reviews',
+        error: error.message,
         message: error.message,
+        supabaseError: error.supabaseError,
         stack:
           process.env.NODE_ENV === 'development'
             ? error.stack

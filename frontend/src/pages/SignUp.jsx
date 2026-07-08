@@ -6,7 +6,7 @@ import { useAuth } from '../context/AuthContext';
 import toast from 'react-hot-toast';
 
 export default function SignUp() {
-  const { signUp, loading, toggleDevMode } = useAuth();
+  const { signUp, loading } = useAuth();
   const navigate = useNavigate();
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -49,7 +49,7 @@ export default function SignUp() {
       }
     } catch (error) {
       if (error.message && error.message.includes('rate')) {
-        toast.error('Email rate limit exceeded. Please try again in a few minutes, or use Dev Mode.');
+        toast.error('Email rate limit exceeded. Please try again in a few minutes.');
       }
     }
   };
@@ -244,17 +244,6 @@ export default function SignUp() {
             </div>
           </div>
 
-          {/* Dev Mode Button */}
-          <button
-            type="button"
-            onClick={() => {
-              toggleDevMode(true);
-              navigate('/dashboard');
-            }}
-            className="w-full mt-6 py-2 rounded-lg bg-[#0c0c0e] border border-dashed border-[#4b5563] hover:border-purple-500/50 hover:bg-[#161619] text-[#9ca3af] hover:text-white font-medium text-xs transition-all cursor-pointer"
-          >
-            🧪 DEV MODE - Skip to Dashboard
-          </button>
         </div>
 
         {/* Bottom Switch Link */}
