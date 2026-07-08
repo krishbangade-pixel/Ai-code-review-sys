@@ -19,7 +19,8 @@ export default function DetailedReport() {
       if (!user?.id) return;
       try {
         setLoading(true);
-        const reviewData = await getReviewById(id, user.id);
+        const result = await getReviewById(id, user.id);
+        const reviewData = result.review;
 
         console.log('Fetched Review:', reviewData);
 

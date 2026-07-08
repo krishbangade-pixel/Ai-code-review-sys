@@ -81,7 +81,7 @@ export async function getReviewById(reviewId, userId) {
   }
 
   const data = await response.json();
-  return data.review;
+  return data; // Return the full object so we can access data.review in DetailedReport
 }
 
 export async function deleteReview(reviewId, userId) {
