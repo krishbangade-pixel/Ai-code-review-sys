@@ -54,26 +54,6 @@ export async function reviewFiles(files, userId, projectName) {
   return data.review;
 }
 
-export async function reviewGithubRepo(repoUrl, userId, projectName) {
-  requireValidUserId(userId);
-
-  const response = await fetch(`${API_BASE_URL}/api/review/github`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({ repo_url: repoUrl, user_id: userId, projectName }),
-  });
-
-  if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.message || 'Failed to review repository');
-  }
-
-  const data = await response.json();
-  return data.review;
-}
-
 export async function getReviews(userId) {
   requireValidUserId(userId);
 

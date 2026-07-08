@@ -8,7 +8,6 @@ import {
   Upload, 
   Sun, 
   Moon,
-  Github,
   KeyRound,
   ShieldAlert
 } from 'lucide-react';

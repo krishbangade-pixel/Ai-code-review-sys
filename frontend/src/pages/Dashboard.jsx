@@ -2,7 +2,7 @@
 import React, { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { FileCode, ShieldAlert, Award, Zap, ArrowUpRight, Plus, Github } from 'lucide-react';
+import { FileCode, ShieldAlert, Award, Zap, ArrowUpRight, Plus } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useReviews } from '../context/ReviewContext';
 
@@ -139,7 +139,7 @@ export default function Dashboard() {
           </div>
         ) : reviews.length === 0 ? (
           <div className="glass-panel p-8 rounded-2xl border border-[#1f1f23] text-center">
-            <Github size={24} className="text-[#6b7280] mx-auto mb-3" />
+            <FileCode size={24} className="text-[#6b7280] mx-auto mb-3" />
             <h4 className="text-white font-medium mb-1">No reviews yet</h4>
             <p className="text-xs text-[#9ca3af] mb-4">Start by reviewing your first piece of code</p>
             <button 

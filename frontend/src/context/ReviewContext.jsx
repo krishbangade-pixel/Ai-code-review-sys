@@ -6,7 +6,6 @@ import { supabase } from '../lib/supabase';
 import {
   reviewCode,
   reviewFiles,
-  reviewGithubRepo,
   getReviews,
   deleteReview as deleteReviewApi,
 } from '../services/api';
@@ -111,31 +110,6 @@ export const ReviewProvider = ({ children }) => {
     }
   };
 
-  const addReviewGithub = async (repoUrl, projectName) => {
-    const authenticatedUserId = await getAuthenticatedUserId();
-
-    if (!authenticatedUserId) {
-      toast.error('You must be logged in to review code');
-      return null;
-    }
-
-    setAnalyzing(true);
-    toast.loading('Cloning and analyzing repository...', { id: 'analyzing-toast' });
-
-    try {
-      const newReview = await reviewGithubRepo(repoUrl, authenticatedUserId, projectName);
-      setReviews((prev) => [newReview, ...prev]);
-      toast.success('Repository reviewed!', { id: 'analyzing-toast' });
-      return newReview.id;
-    } catch (error) {
-      console.error('Review failed:', error);
-      toast.error(error.message || 'Analysis failed', { id: 'analyzing-toast' });
-      return null;
-    } finally {
-      setAnalyzing(false);
-    }
-  };
-
   const deleteReview = async (id) => {
     const authenticatedUserId = await getAuthenticatedUserId();
 
@@ -159,7 +133,6 @@ export const ReviewProvider = ({ children }) => {
         analyzing,
         addReviewCode,
         addReviewFiles,
-        addReviewGithub,
         deleteReview,
         refreshReviews: fetchReviews,
       }}

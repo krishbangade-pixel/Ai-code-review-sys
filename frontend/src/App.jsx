@@ -61,9 +61,9 @@ const AuthRoute = ({ children }) => {
   return children;
 };
 
-// Root Route Component (handles redirect between landing and dashboard)
+// Root Route Component (always show Landing Page on initial load)
 const RootRoute = () => {
-  const { user, loading } = useAuth();
+  const { loading } = useAuth();
   
   if (loading) {
     return (
@@ -72,10 +72,6 @@ const RootRoute = () => {
         <p className="text-sm text-[#9ca3af]">Loading...</p>
       </div>
     );
-  }
-
-  if (user) {
-    return <Navigate to="/dashboard" replace />;
   }
 
   return <Landing />;

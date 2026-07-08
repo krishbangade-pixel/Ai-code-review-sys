@@ -5,7 +5,6 @@ import { motion } from 'framer-motion';
 import Editor from '@monaco-editor/react';
 import {
   Upload,
-  Github,
   Code,
   File,
   Trash2,
@@ -17,7 +16,7 @@ import { useAuth } from '../context/AuthContext';
 import toast from 'react-hot-toast';
 
 export default function NewReview() {
-  const { addReviewCode, addReviewFiles, addReviewGithub, analyzing } =
+  const { addReviewCode, addReviewFiles, analyzing } =
     useReviews();
   const { user } = useAuth();
   const navigate = useNavigate();
@@ -34,9 +33,6 @@ export default function NewReview() {
   const [files, setFiles] = useState([]);
   const fileInputRef = useRef(null);
 
-  // GitHub Tab State
-  const [repoUrl, setRepoUrl] = useState('');
-
   // Handler for Analyze Button
   const handleRunAnalysis = async () => {
     let reviewId = null;
@@ -52,14 +48,6 @@ export default function NewReview() {
         return;
       }
       reviewId = await addReviewFiles(files, projectName);
-    } else if (activeTab === 'github') {
-      const gitRegex =
-        /^https?:\/\/(www\.)?github\.com\/[a-zA-Z0-9_-]+\/[a-zA-Z0-9_-]+(\/)?$/;
-      if (!repoUrl.trim() || !gitRegex.test(repoUrl.trim())) {
-        toast.error('Please enter a valid public GitHub Repository URL');
-        return;
-      }
-      reviewId = await addReviewGithub(repoUrl, projectName);
     }
 
     if (reviewId) {
@@ -152,17 +140,6 @@ export default function NewReview() {
             >
               <Upload size={14} />
               Upload Files
-            </button>
-            <button
-              onClick={() => setActiveTab('github')}
-              className={`flex-1 flex items-center justify-center gap-2 py-2 text-xs font-semibold rounded-lg transition-all cursor-pointer ${
-                activeTab === 'github'
-                  ? 'bg-[#1f1f23] text-white'
-                  : 'text-[#6b7280] hover:text-[#9ca3af]'
-              }`}
-            >
-              <Github size={14} />
-              GitHub Repository
             </button>
           </div>
 
@@ -257,37 +234,6 @@ export default function NewReview() {
                     </div>
                   </div>
                 )}
-              </div>
-            )}
-
-            {/* TAB CONTENT: GitHub Integration */}
-            {activeTab === 'github' && (
-              <div className="space-y-4">
-                <div>
-                  <label
-                    className="block text-xs font-semibold text-[#9ca3af] uppercase tracking-wider mb-2"
-                    htmlFor="repoUrl"
-                  >
-                    Public GitHub Repository URL
-                  </label>
-                  <div className="relative w-full max-w-full">
-                    <span className="absolute inset-y-0 left-0 pl-3.5 flex items-center text-[#6b7280] pointer-events-none">
-                      <Github size={16} />
-                    </span>
-                    <input
-                      id="repoUrl"
-                      type="text"
-                      placeholder="https://github.com/username/repository"
-                      value={repoUrl}
-                      onChange={(e) => setRepoUrl(e.target.value)}
-                      className="w-full max-w-full pl-10 pr-4 py-2.5 rounded-xl border border-[#1f1f23] bg-[#0c0c0e]/80 text-white placeholder-[#4b5563] text-xs sm:text-sm focus:border-indigo-500/80 focus:ring-1 focus:ring-indigo-500/80 outline-none transition-all"
-                    />
-                  </div>
-                  <p className="text-[10px] text-[#6b7280] mt-1.5">
-                    Make sure the repository is public so the scanner can fetch
-                    the code tree.
-                  </p>
-                </div>
               </div>
             )}
 

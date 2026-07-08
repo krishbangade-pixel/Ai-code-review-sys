@@ -69,7 +69,7 @@ function ElegantShape({
 }
 
 export default function Landing() {
-  const { isAuthenticated } = useAuth();
+  const { user } = useAuth();
   const navigate = useNavigate();
 
   const fadeUpVariants = {
@@ -149,10 +149,10 @@ export default function Landing() {
 
         <div className="flex items-center gap-4">
           <Link 
-            to={isAuthenticated ? "/dashboard" : "/login"}
+            to={user ? "/dashboard" : "/login"}
             className="px-4.5 py-2 text-xs font-bold rounded-xl border border-white/10 hover:border-indigo-500/50 hover:bg-[#161619]/40 text-[#f3f4f6] transition-all cursor-pointer"
           >
-            {isAuthenticated ? "Dashboard" : "Sign In"}
+            {user ? "Dashboard" : "Sign In"}
           </Link>
         </div>
       </header>
@@ -205,7 +205,7 @@ export default function Landing() {
             animate="visible"
           >
             <p className="text-sm sm:text-base md:text-lg text-white/50 mb-10 leading-relaxed font-light tracking-wide max-w-xl mx-auto px-4">
-              Upload files, paste modules, or sync GitHub repos to run real-time static compilation checks, vulnerability tracking, and automated refactoring diffs.
+              Upload files or paste modules to run real-time static compilation checks, vulnerability tracking, and automated refactoring diffs.
             </p>
           </motion.div>
 
@@ -218,7 +218,7 @@ export default function Landing() {
             className="flex flex-col sm:flex-row items-center justify-center gap-4 px-4"
           >
             <button
-              onClick={() => navigate(isAuthenticated ? "/dashboard" : "/signup")}
+              onClick={() => navigate(user ? "/dashboard" : "/signup")}
               className="w-full sm:w-auto px-8 py-3.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-sm tracking-wider flex items-center justify-center gap-2 cursor-pointer shadow-lg shadow-indigo-600/10 transition-all duration-300"
             >
               Get Started Free
@@ -226,7 +226,7 @@ export default function Landing() {
             </button>
             
             <button
-              onClick={() => navigate(isAuthenticated ? "/dashboard" : "/login")}
+              onClick={() => navigate(user ? "/dashboard" : "/login")}
               className="w-full sm:w-auto px-8 py-3.5 rounded-xl border border-[#1f1f23] hover:border-indigo-500/30 hover:bg-white/[0.02] text-white font-bold text-sm tracking-wider cursor-pointer transition-all duration-300"
             >
               Access Dashboard
