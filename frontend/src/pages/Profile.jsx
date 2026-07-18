@@ -13,6 +13,7 @@ import {
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import toast from 'react-hot-toast';
+import Avatar from '../components/common/Avatar';
 
 export default function Profile() {
   const { user, updateProfile, updatePassword, deleteAccount, theme, toggleTheme } = useAuth();
@@ -103,10 +104,10 @@ export default function Profile() {
           <div className="glass-panel p-6 rounded-2xl border border-[#1f1f23] flex flex-col items-center gap-4 text-center">
             <div className="relative group">
               <div className="w-32 h-32 aspect-square rounded-full overflow-hidden">
-                <img 
+                <Avatar 
                   src={avatarUrl} 
                   alt={name} 
-                  className="w-full h-full rounded-full object-cover border-2 border-indigo-500/20 group-hover:border-indigo-500 transition-all duration-300 shadow-xl"
+                  className="w-32 h-32 border-2 border-indigo-500/20 group-hover:border-indigo-500 transition-all duration-300 shadow-xl"
                 />
               </div>
               <div className="absolute inset-0 bg-black/60 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer">
@@ -131,7 +132,7 @@ export default function Profile() {
                       avatarUrl === url ? 'border-indigo-500 scale-105 shadow-md shadow-indigo-500/10' : 'border-[#1f1f23] hover:border-[#6b7280]'
                     }`}
                   >
-                    <img src={url} alt={`Preset ${idx + 1}`} className="w-full h-full object-cover" />
+                    <Avatar src={url} alt={`Preset ${idx + 1}`} className="w-full h-full" />
                   </button>
                 ))}
               </div>

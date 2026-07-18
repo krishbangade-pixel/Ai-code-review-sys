@@ -16,6 +16,7 @@ import {
   Zap
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
+import Avatar from '../common/Avatar';
 
 export default function Sidebar({ isMobileOpen, setIsMobileOpen }) {
   const { user, logout } = useAuth();
@@ -109,10 +110,10 @@ export default function Sidebar({ isMobileOpen, setIsMobileOpen }) {
         <div className="p-3 border-t border-[#1f1f23] flex flex-col gap-2">
           {!isCollapsed ? (
             <div className="flex items-center gap-3 p-2 rounded-xl bg-[#161619]/40 border border-[#1f1f23]/60">
-              <img 
+              <Avatar 
                 src={user.avatar} 
                 alt={user.name} 
-                className="w-9 h-9 rounded-full object-cover border border-[#1f1f23]"
+                className="w-9 h-9 border border-[#1f1f23]"
               />
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-semibold text-white truncate leading-none mb-1">{user.name}</p>
@@ -123,10 +124,10 @@ export default function Sidebar({ isMobileOpen, setIsMobileOpen }) {
             </div>
           ) : (
             <div className="flex justify-center py-2">
-              <img 
+              <Avatar 
                 src={user.avatar} 
                 alt={user.name} 
-                className="w-8 h-8 rounded-full object-cover border border-[#1f1f23]"
+                className="w-8 h-8 border border-[#1f1f23]"
                 onClick={() => navigate('/profile')}
               />
             </div>

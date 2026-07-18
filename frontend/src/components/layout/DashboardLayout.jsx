@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Menu, Cpu, Bell, ChevronDown } from 'lucide-react';
 import Sidebar from './Sidebar';
+import Avatar from '../common/Avatar';
 import { useAuth } from '../../context/AuthContext';
 
 export default function DashboardLayout({ children }) {
@@ -92,10 +93,10 @@ export default function DashboardLayout({ children }) {
 
             {/* Quick Profile Dropdown wrapper */}
             <div className="flex items-center gap-2 pl-2 border-l border-[#1f1f23]">
-              <img 
+              <Avatar 
                 src={user.avatar} 
                 alt={user.name} 
-                className="w-7 h-7 rounded-full object-cover border border-[#1f1f23] cursor-pointer"
+                className="w-7 h-7 border border-[#1f1f23]"
                 onClick={() => navigate('/profile')}
               />
               <ChevronDown size={14} className="text-[#6b7280] hidden sm:block" />
