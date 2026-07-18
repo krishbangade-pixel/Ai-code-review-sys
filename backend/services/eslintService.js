@@ -32,7 +32,17 @@ const eslintService = {
       useEslintrc: false
     });
 
-    const results = await eslint.lintFiles(filePaths);
+    const jsFilesOnly = filePaths.filter(file => {
+      const ext = path.extname(file).toLowerCase();
+      return ['.js', '.jsx', '.mjs', '.cjs'].includes(ext);
+    });
+
+    if (jsFilesOnly.length === 0) {
+      console.log('[eslintService] No JS/JSX files to lint');
+      return [];
+    }
+
+    const results = await eslint.lintFiles(jsFilesOnly);
     const formattedResults = [];
 
     for (const result of results) {

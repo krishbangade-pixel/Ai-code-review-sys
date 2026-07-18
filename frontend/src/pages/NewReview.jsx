@@ -14,6 +14,7 @@ import {
 import { useReviews } from '../context/ReviewContext';
 import { useAuth } from '../context/AuthContext';
 import toast from 'react-hot-toast';
+import { validateAndProcessFile } from '../utils/fileValidation';
 
 export default function NewReview() {
   const { addReviewCode, addReviewFiles, analyzing } =
@@ -30,6 +31,15 @@ export default function NewReview() {
 
   // File Upload Tab State
   const [files, setFiles] = useState([]);
+  const fileInputRef = useRef(null);
+
+  const handleFileInputChange = (e) => {
+    if (e.target.files) {
+      const selected = Array.from(e.target.files);
+      handleFileSelection(selected);
+      e.target.value = '';
+    }
+  };
 
   // Handler for Analyze Button
   const handleRunAnalysis = async () => {
@@ -64,11 +74,25 @@ export default function NewReview() {
     handleFileSelection(droppedFiles);
   };
 
-  const handleFileSelection = (newFiles) => {
+  const handleFileSelection = async (newFiles) => {
     if (newFiles.length === 0) return;
-    setFiles((prev) => [...prev, ...newFiles]);
-    toast.success('Files selected');
+    
+    const validFiles = [];
+    for (const file of newFiles) {
+      const result = await validateAndProcessFile(file);
+      if (result.valid) {
+        validFiles.push(result.file);
+      } else {
+        toast.error(`${file.name}: ${result.error}`);
+      }
+    }
+    
+    if (validFiles.length > 0) {
+      setFiles((prev) => [...prev, ...validFiles]);
+      toast.success(`${validFiles.length} file(s) selected`);
+    }
   };
+
   const handleRemoveFile = (indexToRemove) => {
     setFiles((prev) => prev.filter((_, idx) => idx !== indexToRemove));
   };
@@ -81,7 +105,7 @@ export default function NewReview() {
           Review New Project
         </h2>
         <p className="text-base text-[#9ca3af] mt-1.5">
-          Write JavaScript code or drag and drop files to receive AI-driven reviews.
+          Write code or drag and drop files to receive AI-driven reviews.
         </p>
       </div>
 
@@ -167,17 +191,26 @@ export default function NewReview() {
                 <div
                   onDragOver={handleDragOver}
                   onDrop={handleDrop}
+                  onClick={() => fileInputRef.current?.click()}
                   className="border-2 border-dashed border-[#1f1f23] hover:border-indigo-500/50 bg-[#0c0c0e]/50 hover:bg-[#161619]/40 p-8 rounded-2xl flex flex-col items-center justify-center text-center cursor-pointer transition-all gap-3"
                 >
+                  <input
+                    type="file"
+                    ref={fileInputRef}
+                    onChange={handleFileInputChange}
+                    multiple
+                    accept=".js,.jsx,.ts,.tsx,.json,.html,.css,.txt,.md"
+                    className="hidden"
+                  />
                   <div className="p-3 rounded-full bg-indigo-500/10 text-indigo-400">
                     <Upload size={24} />
                   </div>
                   <div>
                     <p className="text-sm font-semibold text-white">
-                      Drag & Drop files here
+                      Drag & Drop files here or click to browse
                     </p>
                     <p className="text-xs text-[#9ca3af] mt-1">
-                      Supports .js, .jsx, .mjs, .cjs files
+                      Supports code and text files (.js, .jsx, .ts, .tsx, .json, .html, .css, .txt, .md)
                     </p>
                   </div>
                 </div>

@@ -53,7 +53,7 @@ export default function DashboardLayout({ children }) {
   };
 
   return (
-    <div className="flex min-h-screen bg-[#030303] text-white">
+    <div className="flex h-screen bg-[#030303] text-white overflow-hidden">
       {/* Sidebar Panel */}
       <Sidebar isMobileOpen={isMobileOpen} setIsMobileOpen={setIsMobileOpen} />
 

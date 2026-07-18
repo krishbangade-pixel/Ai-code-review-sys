@@ -4,7 +4,10 @@ const path = require('path');
 const os = require('os');
 
 const IGNORED_DIRS = ['node_modules', 'dist', 'build', '.git', 'coverage', '.next', 'out'];
-const JS_EXTENSIONS = ['.js', '.jsx'];
+const JS_EXTENSIONS = [
+  '.js', '.jsx', '.mjs', '.cjs', '.ts', '.tsx', '.json', '.html', '.css', '.txt', '.md', '.yaml', '.yml',
+  '.py', '.java', '.c', '.cpp', '.h', '.cs', '.go', '.rs'
+];
 
 const fileUtils = {
   async createTempDir() {
