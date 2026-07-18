@@ -20,7 +20,6 @@ export default function NewReview() {
     useReviews();
   const { user, theme } = useAuth();
   const navigate = useNavigate();
-
   const [activeTab, setActiveTab] = useState('paste');
 
   // Project Name State
@@ -70,7 +69,6 @@ export default function NewReview() {
     setFiles((prev) => [...prev, ...newFiles]);
     toast.success('Files selected');
   };
-
   const handleRemoveFile = (indexToRemove) => {
     setFiles((prev) => prev.filter((_, idx) => idx !== indexToRemove));
   };
@@ -82,8 +80,8 @@ export default function NewReview() {
         <h2 className="text-2xl font-bold tracking-tight text-white m-0">
           Review New Project
         </h2>
-        <p className="text-sm text-[#9ca3af] mt-1">
-          Submit your source code or repository to receive AI-driven reviews.
+        <p className="text-base text-[#9ca3af] mt-1.5">
+          Write JavaScript code or drag and drop files to receive AI-driven reviews.
         </p>
       </div>
 

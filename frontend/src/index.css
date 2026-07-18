@@ -262,3 +262,46 @@ img {
   border-color: rgba(0, 0, 0, 0.1) !important;
 }
 
+/* Keep button text white for solid colored buttons */
+.light button.text-white,
+.light a.text-white,
+.light .bg-indigo-600,
+.light .bg-indigo-600 *,
+.light .bg-indigo-500,
+.light .bg-indigo-500 *,
+.light .bg-red-600,
+.light .bg-red-600 *,
+.light .bg-purple-600,
+.light .bg-purple-600 *,
+.light .bg-emerald-600,
+.light .bg-emerald-600 * {
+  color: #ffffff !important;
+}
+
+/* Sidebar and general theme buttons styling overrides in light mode */
+.light button:not(.bg-indigo-600):not(.bg-red-600):not(.bg-purple-600):not(.bg-emerald-600) {
+  color: #475569 !important;
+  border-color: #cbd5e1 !important;
+  background-color: #f1f5f9 !important;
+}
+
+/* Hover state for inactive light mode buttons */
+.light button:not(.bg-indigo-600):not(.bg-red-600):not(.bg-purple-600):not(.bg-emerald-600):hover {
+  color: #0f172a !important;
+  background-color: #e2e8f0 !important;
+}
+
+/* Active theme selector buttons override in light mode (e.g. they have .text-white or active class) */
+.light button:not(.bg-indigo-600):not(.bg-red-600):not(.bg-purple-600):not(.bg-emerald-600)[class*="text-white"],
+.light button:not(.bg-indigo-600):not(.bg-red-600):not(.bg-purple-600):not(.bg-emerald-600)[class*="bg-indigo-500/5"] {
+  color: #4f46e5 !important;
+  background-color: rgba(99, 102, 241, 0.08) !important;
+  border-color: rgba(99, 102, 241, 0.3) !important;
+}
+
+/* Brand logo text override in light mode */
+.light .brand-logo-text {
+  background-image: linear-gradient(to right, #0f172a, #4338ca, #7c3aed) !important;
+}
+
+
