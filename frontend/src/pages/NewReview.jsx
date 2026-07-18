@@ -14,6 +14,7 @@ import {
 import { useReviews } from '../context/ReviewContext';
 import { useAuth } from '../context/AuthContext';
 import toast from 'react-hot-toast';
+import { validateAndProcessFile } from '../utils/fileValidation';
 
 export default function NewReview() {
   const { addReviewCode, addReviewFiles, analyzing } =
@@ -71,10 +72,27 @@ export default function NewReview() {
     handleFileSelection(selectedFiles);
   };
 
-  const handleFileSelection = (newFiles) => {
+  const handleFileSelection = async (newFiles) => {
     if (newFiles.length === 0) return;
-    setFiles((prev) => [...prev, ...newFiles]);
-    toast.success('Files selected');
+    
+    const validatedFiles = [];
+    for (const file of newFiles) {
+      // Validate file content, size, binary flags, and language detection
+      const result = await validateAndProcessFile(file);
+      if (result.valid) {
+        // Avoid duplicate files in the list
+        if (!files.some(f => f.name === result.file.name) && !validatedFiles.some(f => f.name === result.file.name)) {
+          validatedFiles.push(result.file);
+        }
+      } else {
+        toast.error(`${file.name}: ${result.error}`);
+      }
+    }
+    
+    if (validatedFiles.length > 0) {
+      setFiles((prev) => [...prev, ...validatedFiles]);
+      toast.success(`${validatedFiles.length} file(s) added successfully`);
+    }
   };
 
   const handleRemoveFile = (indexToRemove) => {
@@ -184,7 +202,7 @@ export default function NewReview() {
                     ref={fileInputRef}
                     onChange={handleFileChange}
                     className="hidden"
-                    accept=".js,.jsx"
+                    accept=".js,.jsx,.ts,.tsx,.json,.html,.css,.txt,.md"
                   />
                   <div className="p-3 rounded-full bg-indigo-500/10 text-indigo-400">
                     <Upload size={24} />
@@ -194,7 +212,7 @@ export default function NewReview() {
                       Drag & Drop files or browse
                     </p>
                     <p className="text-xs text-[#9ca3af] mt-1">
-                      Supports JS and JSX files
+                      Supports JS, JSX, TS, TSX, HTML, CSS, JSON, TXT, MD
                     </p>
                   </div>
                 </div>

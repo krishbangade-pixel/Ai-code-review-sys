@@ -34,39 +34,58 @@ export function isBinary(text) {
  * @returns {string} The detected file extension (e.g. '.js', '.ts', etc.)
  */
 export function detectLanguage(content, fileName) {
-  const contentLower = content.toLowerCase();
-  
+  const contentTrimmed = content.trim();
+
   // 1. Detect HTML content
-  if (contentLower.includes('<!doctype html>') || contentLower.includes('<html>') || contentLower.includes('</div>') || contentLower.includes('</a>')) {
+  if (
+    content.includes('<!DOCTYPE html>') || 
+    content.includes('<!doctype html>') || 
+    content.includes('<html>') || 
+    content.includes('<html ')
+  ) {
     return '.html';
   }
   
   // 2. Detect CSS styles
-  if (contentLower.includes('body {') || contentLower.includes('html {') || (content.includes('{') && content.includes('}') && (content.includes('margin:') || content.includes('padding:') || content.includes('color:')))) {
+  if (
+    content.includes('body {') || 
+    content.includes('body{') || 
+    content.includes('html {') || 
+    content.includes('html{') || 
+    (content.includes('{') && content.includes('}') && (
+      content.includes('margin:') || 
+      content.includes('padding:') || 
+      content.includes('color:') || 
+      content.includes('background:')
+    ))
+  ) {
     return '.css';
   }
   
-  // 3. Detect TypeScript features (interfaces, type definitions, or enums with standard type declarations)
-  if (content.match(/\b(interface|type|enum)\b/) && (content.includes(':') || content.includes('<') || content.includes('>'))) {
+  // 3. Detect TypeScript features (interface, type, enum keywords)
+  if (/\b(interface|type|enum)\b/.test(content)) {
     return '.ts';
   }
   
-  // 4. Detect JavaScript features (standard JS syntax elements)
-  if (content.match(/\b(const|let|var|function|import|export)\b/)) {
+  // 4. Detect JavaScript features (function, const, let, import, export keywords)
+  if (/\b(function|const|let|import|export)\b/.test(content)) {
     return '.js';
   }
 
-  // 5. Detect Python scripts
-  if (content.match(/\b(def|import os|import sys|print\()/) && content.includes(':')) {
+  // 5. Detect Python scripts (def, import os keywords or a function definition pattern)
+  if (
+    /\b(def|import os)\b/.test(content) || 
+    (content.includes('def ') && content.includes(':'))
+  ) {
     return '.py';
   }
 
-  // 6. Detect Java code
-  if (content.match(/\b(public class|public static void main|System\.out\.print)/)) {
+  // 6. Detect Java code (public class keyword)
+  if (content.includes('public class ')) {
     return '.java';
   }
 
-  // 7. Detect C/C++ source code
+  // 7. Detect C/C++ source code (#include directive or int main function declaration)
   if (content.includes('#include') || content.includes('int main(')) {
     return '.cpp';
   }
@@ -77,21 +96,31 @@ export function detectLanguage(content, fileName) {
 }
 
 /**
- * Validates a file by reading its contents, checking for emptiness,
- * verifying it's not a binary file, and detecting the programming language
- * to automatically rename .txt/.md files to the correct extension when possible.
+ * Validates a file by checking its extension, checking for emptiness,
+ * reading its contents, verifying it's not a binary file, and detecting the 
+ * programming language to automatically rename .txt/.md files to the correct 
+ * extension when possible.
  * 
  * @param {File} file The browser File object.
  * @returns {Promise<{valid: boolean, file: File, error?: string}>}
  */
 export async function validateAndProcessFile(file) {
-  // 1. Empty check (File size is zero bytes)
+  // 1. Extension validation check first
+  const dotIndex = file.name.lastIndexOf('.');
+  const ext = dotIndex !== -1 ? file.name.substring(dotIndex).toLowerCase() : '';
+  const allowedExtensions = ['.js', '.jsx', '.ts', '.tsx', '.json', '.html', '.css', '.txt', '.md'];
+  
+  if (!allowedExtensions.includes(ext)) {
+    return { valid: false, file, error: "Unsupported file type." };
+  }
+
+  // 2. Empty check (File size is zero bytes)
   if (file.size === 0) {
     return { valid: false, file, error: "This file is empty." };
   }
 
   try {
-    // 2. Read the file contents using standard text reader API
+    // 3. Read the file contents using standard text reader API
     const content = await file.text();
     
     // Check if the read text is empty or only whitespace
@@ -99,17 +128,9 @@ export async function validateAndProcessFile(file) {
       return { valid: false, file, error: "This file is empty." };
     }
 
-    // 3. Binary detection (reject non-source-code files like images/zips)
+    // 4. Binary detection (reject non-source-code files like images/zips)
     if (isBinary(content)) {
       return { valid: false, file, error: "The uploaded file doesn't appear to contain source code." };
-    }
-
-    // 4. Extension validation list
-    const ext = file.name.substring(file.name.lastIndexOf('.')).toLowerCase();
-    const allowedExtensions = ['.js', '.jsx', '.ts', '.tsx', '.json', '.html', '.css', '.txt', '.md'];
-    
-    if (!allowedExtensions.includes(ext)) {
-      return { valid: false, file, error: "Unsupported file type." };
     }
 
     // 5. If the file is .txt or .md, attempt programming language auto-detection
@@ -119,11 +140,10 @@ export async function validateAndProcessFile(file) {
       
       // If we detected a valid code language, rename the extension to trigger proper reviews
       if (detectedExt !== ext) {
-        const dotIndex = file.name.lastIndexOf('.');
         const baseName = dotIndex !== -1 ? file.name.slice(0, dotIndex) : file.name;
         const newName = baseName + detectedExt;
         
-        // Re-wrap the file with the updated extension name
+        // Re-wrap the file with the updated extension name using standard File constructor
         processedFile = new File([file], newName, { type: file.type });
       }
     }
