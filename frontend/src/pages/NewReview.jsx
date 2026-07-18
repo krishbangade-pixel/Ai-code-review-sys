@@ -19,7 +19,7 @@ import { validateAndProcessFile } from '../utils/fileValidation';
 export default function NewReview() {
   const { addReviewCode, addReviewFiles, analyzing } =
     useReviews();
-  const { user } = useAuth();
+  const { user, theme } = useAuth();
   const navigate = useNavigate();
 
   const [activeTab, setActiveTab] = useState('paste');
@@ -171,7 +171,7 @@ export default function NewReview() {
                   <Editor
                     height="400px"
                     language="javascript"
-                    theme="vs-dark"
+                    theme={theme === 'dark' ? 'vs-dark' : 'vs'}
                     value={codeValue}
                     onChange={setCodeValue}
                     options={{

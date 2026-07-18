@@ -48,9 +48,9 @@ export default function Sidebar({ isMobileOpen, setIsMobileOpen }) {
             <motion.span 
               initial={{ opacity: 0, x: -10 }}
               animate={{ opacity: 1, x: 0 }}
-              className="text-lg font-bold bg-gradient-to-r from-white via-[#f3f4f6] to-purple-400 bg-clip-text text-transparent font-sans cursor-pointer"
+              className="text-lg font-bold bg-gradient-to-r from-[#0f172a] via-[#1e1b4b] to-[#4f46e5] dark:from-white dark:via-[#f3f4f6] dark:to-[#a78bfa] bg-clip-text text-transparent font-sans cursor-pointer"
             >
-              Autonomous<span className="text-indigo-400 font-extrabold"> AI</span>
+              Autonomous AI
             </motion.span>
           )}
         </div>
@@ -81,15 +81,24 @@ export default function Sidebar({ isMobileOpen, setIsMobileOpen }) {
               key={item.name}
               to={item.path}
               onClick={() => setIsMobileOpen(false)}
-              className={({ isActive }) => `
+              className={`
                 flex items-center gap-3.5 px-3 py-3 rounded-xl text-sm font-medium transition-all duration-300 relative group cursor-pointer
                 ${isActive 
-                  ? 'text-white bg-gradient-to-r from-indigo-500/10 to-purple-500/5 border border-indigo-500/20' 
-                  : 'hover:text-[#f3f4f6] hover:bg-[#161619]/60 border border-transparent'
+                  ? 'text-indigo-600 dark:text-white bg-indigo-50/50 dark:bg-gradient-to-r dark:from-indigo-500/10 dark:to-purple-500/5 border border-indigo-500/20 dark:border-indigo-500/30' 
+                  : 'text-[#475569] dark:text-[#9ca3af] hover:text-indigo-600 dark:hover:text-[#f3f4f6] hover:bg-slate-100/50 dark:hover:bg-[#161619]/60 border border-transparent'
                 }
               `}
             >
-              <item.icon size={18} className={`${isActive ? 'text-indigo-400' : 'group-hover:text-white'} transition-colors`} />
+              <item.icon 
+                size={18} 
+                className={`
+                  transition-colors
+                  ${isActive 
+                    ? 'text-indigo-600 dark:text-indigo-400' 
+                    : 'text-[#64748b] dark:text-[#9ca3af] group-hover:text-indigo-600 dark:group-hover:text-white'
+                  }
+                `} 
+              />
               {!isCollapsed && <span>{item.name}</span>}
               
               {/* Tooltip for collapsed mode */}
