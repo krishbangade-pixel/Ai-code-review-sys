@@ -31,7 +31,7 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [theme, setTheme] = useState(() => {
-    return localStorage.getItem('pulsar_theme') || 'dark';
+    return localStorage.getItem('autonomous_theme') || 'dark';
   });
   const navigate = useNavigate();
 
@@ -40,12 +40,14 @@ export const AuthProvider = ({ children }) => {
     const root = window.document.documentElement;
     if (theme === 'dark') {
       root.classList.add('dark');
+      root.classList.remove('light');
       root.style.colorScheme = 'dark';
     } else {
       root.classList.remove('dark');
+      root.classList.add('light');
       root.style.colorScheme = 'light';
     }
-    localStorage.setItem('pulsar_theme', theme);
+    localStorage.setItem('autonomous_theme', theme);
   }, [theme]);
 
   const toggleTheme = () => {
@@ -170,7 +172,7 @@ export const AuthProvider = ({ children }) => {
 
       if (data?.user) {
         if (data?.session) {
-          toast.success('Account created! Welcome to PulsarAI.');
+          toast.success('Account created! Welcome to Autonomous AI.');
         } else {
           toast.success('Account created! Please check your email to confirm your registration.');
         }
@@ -224,7 +226,7 @@ export const AuthProvider = ({ children }) => {
       } else {
         setUser(null);
         // Only remove our own localStorage items, NOT Supabase's auth storage
-        localStorage.removeItem('pulsar_remember_me');
+        localStorage.removeItem('autonomous_remember_me');
         toast.success('Logged out successfully');
         navigate('/');
       }

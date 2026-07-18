@@ -144,7 +144,7 @@ export default function Landing() {
           <div className="w-9 h-9 rounded-xl bg-indigo-600/10 border border-indigo-500/30 flex items-center justify-center text-indigo-400 flex-shrink-0">
             <Cpu size={18} className="animate-pulse" />
           </div>
-          <span className="font-bold text-white tracking-tight text-lg">Pulsar<span className="text-indigo-400">AI</span></span>
+          <span className="font-bold text-white tracking-tight text-lg">Autonomous<span className="text-indigo-400">AI</span></span>
         </div>
 
         <div className="flex items-center gap-4">
@@ -238,7 +238,7 @@ export default function Landing() {
 
       {/* Footer bar */}
       <footer className="relative z-20 w-full px-4 sm:px-6 py-6 text-center text-[10px] text-white/30 border-t border-white/[0.02] flex flex-col sm:flex-row items-center justify-between gap-4">
-        <span>© 2026 PulsarAI Labs Inc. All rights reserved.</span>
+        <span>© 2026 Autonomous AI Labs Inc. All rights reserved.</span>
         <div className="flex gap-4">
           <a href="#" className="hover:text-white/60 transition-colors">Privacy Policy</a>
           <a href="#" className="hover:text-white/60 transition-colors">Terms of Service</a>

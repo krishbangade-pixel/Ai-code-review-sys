@@ -24,7 +24,7 @@ export default function DashboardLayout({ children }) {
           <div className="w-12 h-12 rounded-xl bg-indigo-500/10 border border-indigo-500/30 flex items-center justify-center animate-spin">
             <Cpu size={24} className="text-indigo-400" />
           </div>
-          <span className="text-sm text-[#9ca3af] font-medium tracking-wide">Loading PulsarAI...</span>
+          <span className="text-sm text-[#9ca3af] font-medium tracking-wide">Loading Autonomous AI...</span>
         </div>
       </div>
     );
@@ -48,7 +48,7 @@ export default function DashboardLayout({ children }) {
         if (location.pathname.startsWith('/reviews/')) {
           return 'Analysis Report';
         }
-        return 'PulsarAI';
+        return 'Autonomous AI';
     }
   };
 

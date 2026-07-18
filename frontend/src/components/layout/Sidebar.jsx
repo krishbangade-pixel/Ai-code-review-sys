@@ -50,7 +50,7 @@ export default function Sidebar({ isMobileOpen, setIsMobileOpen }) {
               animate={{ opacity: 1, x: 0 }}
               className="text-lg font-bold bg-gradient-to-r from-white via-[#f3f4f6] to-purple-400 bg-clip-text text-transparent font-sans cursor-pointer"
             >
-              Pulsar<span className="text-indigo-400 font-extrabold">AI</span>
+              Autonomous<span className="text-indigo-400 font-extrabold">AI</span>
             </motion.span>
           )}
         </div>

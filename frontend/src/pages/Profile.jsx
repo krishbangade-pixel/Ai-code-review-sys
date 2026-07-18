@@ -102,11 +102,13 @@ export default function Profile() {
           
           <div className="glass-panel p-6 rounded-2xl border border-[#1f1f23] flex flex-col items-center gap-4 text-center">
             <div className="relative group">
-              <img 
-                src={avatarUrl} 
-                alt={name} 
-                className="w-24 h-24 rounded-full object-cover border-2 border-indigo-500/20 group-hover:border-indigo-500 transition-all duration-300 shadow-xl"
-              />
+              <div className="w-32 h-32 aspect-square rounded-full overflow-hidden">
+                <img 
+                  src={avatarUrl} 
+                  alt={name} 
+                  className="w-full h-full rounded-full object-cover border-2 border-indigo-500/20 group-hover:border-indigo-500 transition-all duration-300 shadow-xl"
+                />
+              </div>
               <div className="absolute inset-0 bg-black/60 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer">
                 <Upload size={16} className="text-white" />
               </div>

@@ -53,7 +53,7 @@ Your AI Code Review System now has **full Supabase authentication** with Sign Up
 ### 4. **Dev Mode (Development/Testing)**
 - **Buttons**: On both Login and SignUp pages
 - **Click**: "🧪 DEV MODE - Quick Access"
-- **Effect**: Instantly logs in as `dev@pulsar.ai`
+- **Effect**: Instantly logs in as `dev@autonomous.ai`
 - **Use Case**: Quick dashboard access during development
 
 ---

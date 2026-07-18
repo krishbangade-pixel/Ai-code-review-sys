@@ -18,7 +18,7 @@ import toast from 'react-hot-toast';
 export default function NewReview() {
   const { addReviewCode, addReviewFiles, analyzing } =
     useReviews();
-  const { user } = useAuth();
+  const { user, theme } = useAuth();
   const navigate = useNavigate();
 
   const [activeTab, setActiveTab] = useState('paste');
@@ -31,7 +31,6 @@ export default function NewReview() {
 
   // File Upload Tab State
   const [files, setFiles] = useState([]);
-  const fileInputRef = useRef(null);
 
   // Handler for Analyze Button
   const handleRunAnalysis = async () => {
@@ -64,11 +63,6 @@ export default function NewReview() {
     e.preventDefault();
     const droppedFiles = Array.from(e.dataTransfer.files);
     handleFileSelection(droppedFiles);
-  };
-
-  const handleFileChange = (e) => {
-    const selectedFiles = Array.from(e.target.files);
-    handleFileSelection(selectedFiles);
   };
 
   const handleFileSelection = (newFiles) => {
@@ -153,7 +147,7 @@ export default function NewReview() {
                   <Editor
                     height="400px"
                     language="javascript"
-                    theme="vs-dark"
+                    theme={theme === 'dark' ? 'vs-dark' : 'light'}
                     value={codeValue}
                     onChange={setCodeValue}
                     options={{
@@ -175,26 +169,17 @@ export default function NewReview() {
                 <div
                   onDragOver={handleDragOver}
                   onDrop={handleDrop}
-                  onClick={() => fileInputRef.current?.click()}
                   className="border-2 border-dashed border-[#1f1f23] hover:border-indigo-500/50 bg-[#0c0c0e]/50 hover:bg-[#161619]/40 p-8 rounded-2xl flex flex-col items-center justify-center text-center cursor-pointer transition-all gap-3"
                 >
-                  <input
-                    type="file"
-                    multiple
-                    ref={fileInputRef}
-                    onChange={handleFileChange}
-                    className="hidden"
-                    accept=".js,.jsx"
-                  />
                   <div className="p-3 rounded-full bg-indigo-500/10 text-indigo-400">
                     <Upload size={24} />
                   </div>
                   <div>
                     <p className="text-sm font-semibold text-white">
-                      Drag & Drop files or browse
+                      Drag & Drop files here
                     </p>
                     <p className="text-xs text-[#9ca3af] mt-1">
-                      Supports JS and JSX files
+                      Supports .js, .jsx, .mjs, .cjs files
                     </p>
                   </div>
                 </div>
