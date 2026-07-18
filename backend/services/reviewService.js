@@ -67,10 +67,10 @@ const reviewService = {
       }
 
       const jsFiles = await fileUtils.getJsFiles(tempDir);
-      console.log('[reviewService] Found', jsFiles.length, 'supported files for analysis');
+      console.log('[reviewService] Found', jsFiles.length, 'JS/JSX files for analysis');
 
       if (jsFiles.length === 0) {
-        throw new Error('No supported files found in upload');
+        throw new Error('No JS/JSX files found in upload');
       }
 
       console.log('[reviewService] Running ESLint analysis...');
@@ -120,10 +120,10 @@ const reviewService = {
       tempDir = clonedDir;
 
       const jsFiles = await fileUtils.getJsFiles(tempDir);
-      console.log('[reviewService] Found', jsFiles.length, 'supported files for analysis');
+      console.log('[reviewService] Found', jsFiles.length, 'JS/JSX files for analysis');
 
       if (jsFiles.length === 0) {
-        throw new Error('No supported files found in repository');
+        throw new Error('No JS/JSX files found in repository');
       }
 
       console.log('[reviewService] Running ESLint analysis...');

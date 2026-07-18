@@ -14,13 +14,13 @@ import {
 import { useReviews } from '../context/ReviewContext';
 import { useAuth } from '../context/AuthContext';
 import toast from 'react-hot-toast';
-import { validateAndProcessFile } from '../utils/fileValidation';
 
 export default function NewReview() {
   const { addReviewCode, addReviewFiles, analyzing } =
     useReviews();
-  const { user, theme } = useAuth();
+  const { user } = useAuth();
   const navigate = useNavigate();
+
   const [activeTab, setActiveTab] = useState('paste');
 
   // Project Name State
@@ -32,14 +32,6 @@ export default function NewReview() {
   // File Upload Tab State
   const [files, setFiles] = useState([]);
   const fileInputRef = useRef(null);
-
-  const handleFileInputChange = (e) => {
-    if (e.target.files) {
-      const selected = Array.from(e.target.files);
-      handleFileSelection(selected);
-      e.target.value = '';
-    }
-  };
 
   // Handler for Analyze Button
   const handleRunAnalysis = async () => {
@@ -74,23 +66,15 @@ export default function NewReview() {
     handleFileSelection(droppedFiles);
   };
 
-  const handleFileSelection = async (newFiles) => {
+  const handleFileChange = (e) => {
+    const selectedFiles = Array.from(e.target.files);
+    handleFileSelection(selectedFiles);
+  };
+
+  const handleFileSelection = (newFiles) => {
     if (newFiles.length === 0) return;
-    
-    const validFiles = [];
-    for (const file of newFiles) {
-      const result = await validateAndProcessFile(file);
-      if (result.valid) {
-        validFiles.push(result.file);
-      } else {
-        toast.error(`${file.name}: ${result.error}`);
-      }
-    }
-    
-    if (validFiles.length > 0) {
-      setFiles((prev) => [...prev, ...validFiles]);
-      toast.success(`${validFiles.length} file(s) selected`);
-    }
+    setFiles((prev) => [...prev, ...newFiles]);
+    toast.success('Files selected');
   };
 
   const handleRemoveFile = (indexToRemove) => {
@@ -104,8 +88,8 @@ export default function NewReview() {
         <h2 className="text-2xl font-bold tracking-tight text-white m-0">
           Review New Project
         </h2>
-        <p className="text-base text-[#9ca3af] mt-1.5">
-          Write code or drag and drop files to receive AI-driven reviews.
+        <p className="text-sm text-[#9ca3af] mt-1">
+          Submit your source code or repository to receive AI-driven reviews.
         </p>
       </div>
 
@@ -169,7 +153,7 @@ export default function NewReview() {
                   <Editor
                     height="400px"
                     language="javascript"
-                    theme={theme === 'dark' ? 'vs-dark' : 'light'}
+                    theme="vs-dark"
                     value={codeValue}
                     onChange={setCodeValue}
                     options={{
@@ -196,21 +180,21 @@ export default function NewReview() {
                 >
                   <input
                     type="file"
-                    ref={fileInputRef}
-                    onChange={handleFileInputChange}
                     multiple
-                    accept=".js,.jsx,.ts,.tsx,.json,.html,.css,.txt,.md"
+                    ref={fileInputRef}
+                    onChange={handleFileChange}
                     className="hidden"
+                    accept=".js,.jsx"
                   />
                   <div className="p-3 rounded-full bg-indigo-500/10 text-indigo-400">
                     <Upload size={24} />
                   </div>
                   <div>
                     <p className="text-sm font-semibold text-white">
-                      Drag & Drop files here or click to browse
+                      Drag & Drop files or browse
                     </p>
                     <p className="text-xs text-[#9ca3af] mt-1">
-                      Supports code and text files (.js, .jsx, .ts, .tsx, .json, .html, .css, .txt, .md)
+                      Supports JS and JSX files
                     </p>
                   </div>
                 </div>

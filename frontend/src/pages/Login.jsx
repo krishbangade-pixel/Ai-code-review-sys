@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Cpu, Mail, Lock, Eye, EyeOff } from 'lucide-react';
+import { Cpu, Mail, Lock, Eye, EyeOff, Github } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import toast from 'react-hot-toast';
 
@@ -40,6 +40,16 @@ export default function Login() {
     }
   };
 
+  const handleOAuthLogin = (provider) => {
+    toast.loading(`Connecting to ${provider}...`);
+    setTimeout(() => {
+      toast.dismiss();
+      toast.success(`Successfully logged in with ${provider}!`);
+      // Simulate OAuth login
+      login('developer@pulsar.ai', 'oauth-login-token', true);
+      navigate('/dashboard');
+    }, 1500);
+  };
 
   return (
     <div className="min-h-screen w-full flex items-center justify-center bg-[#030303] text-white p-4 relative overflow-hidden bg-grid-pattern">
@@ -59,7 +69,7 @@ export default function Login() {
             <Cpu size={32} />
           </div>
           <h2 className="text-3xl font-extrabold text-white tracking-tight mb-2">Welcome Back</h2>
-          <p className="text-sm text-[#9ca3af]">Enter your details to access Autonomous AI audits</p>
+          <p className="text-sm text-[#9ca3af]">Enter your details to access PulsarAI audits</p>
         </div>
 
         {/* Login Form Card */}
@@ -146,6 +156,39 @@ export default function Login() {
             </button>
           </form>
 
+          {/* Social Logins */}
+          <div className="mt-8">
+            <div className="relative mb-6">
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full border-t border-[#1f1f23]"></div>
+              </div>
+              <div className="relative flex justify-center text-xs uppercase tracking-wider font-semibold">
+                <span className="bg-[#0a0a0c] px-3.5 text-[#6b7280]">Or continue with</span>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <button
+                type="button"
+                onClick={() => handleOAuthLogin('GitHub')}
+                className="flex items-center justify-center gap-2.5 py-2.5 rounded-xl border border-[#1f1f23] bg-[#0c0c0e]/80 hover:bg-[#161619] text-sm text-[#e5e7eb] hover:text-white transition-all cursor-pointer font-medium"
+              >
+                <Github size={16} />
+                GitHub
+              </button>
+              <button
+                type="button"
+                onClick={() => handleOAuthLogin('Google')}
+                className="flex items-center justify-center gap-2.5 py-2.5 rounded-xl border border-[#1f1f23] bg-[#0c0c0e]/80 hover:bg-[#161619] text-sm text-[#e5e7eb] hover:text-white transition-all cursor-pointer font-medium"
+              >
+                {/* SVG for Google Logo */}
+                <svg className="w-4 h-4" viewBox="0 0 24 24">
+                  <path fill="#EA4335" d="M12.24 10.285V14.4h6.887c-.648 2.41-2.519 4.114-5.186 4.114-3.504 0-6.343-2.839-6.343-6.343s2.839-6.343 6.343-6.343c1.624 0 3.099.613 4.228 1.624l3.15-3.15C19.167 2.228 15.938 1 12.24 1 6.032 1 1 6.032 1 12.24s5.032 11.24 11.24 11.24c5.897 0 10.8-4.228 10.8-11.24 0-.583-.058-1.127-.16-1.655H12.24Z"/>
+                </svg>
+                Google
+              </button>
+            </div>
+          </div>
 
         </div>
 

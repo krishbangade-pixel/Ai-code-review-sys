@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Cpu, Mail, Lock, Eye, EyeOff, User } from 'lucide-react';
+import { Cpu, Mail, Lock, Eye, EyeOff, User, Github } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import toast from 'react-hot-toast';
 
@@ -14,37 +14,13 @@ export default function SignUp() {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [agreeTerms, setAgreeTerms] = useState(false);
-  const [nameError, setNameError] = useState('');
-
-  const validateName = (value) => {
-    if (!value || value.trim() === '') {
-      return 'Name is required';
-    }
-    // Check if name contains at least one letter
-    const hasLetter = /[a-zA-Z]/.test(value);
-    if (!hasLetter) {
-      return 'Name must contain letters';
-    }
-    return '';
-  };
-
-  const handleNameChange = (e) => {
-    const value = e.target.value;
-    setName(value);
-    const error = validateName(value);
-    setNameError(error);
-  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
-    // Validate name
-    const nameValidationError = validateName(name);
-    if (nameValidationError) {
-      setNameError(nameValidationError);
+    if (!name) {
+      toast.error('Name is required');
       return;
     }
-    
     if (!email) {
       toast.error('Email is required');
       return;
@@ -78,6 +54,15 @@ export default function SignUp() {
     }
   };
 
+  const handleOAuthSignUp = (provider) => {
+    toast.loading(`Creating account with ${provider}...`);
+    setTimeout(() => {
+      toast.dismiss();
+      toast.success(`Account created with ${provider}! Welcome to PulsarAI.`);
+      signUp('new.developer@pulsar.ai', 'oauth-signup-token', `${provider} Dev`);
+      navigate('/dashboard');
+    }, 1500);
+  };
 
   return (
     <div className="min-h-screen w-full flex items-center justify-center bg-[#030303] text-white p-4 relative overflow-hidden bg-grid-pattern">
@@ -97,7 +82,7 @@ export default function SignUp() {
             <Cpu size={32} />
           </div>
           <h2 className="text-3xl font-extrabold text-white tracking-tight mb-1">Create Account</h2>
-          <p className="text-sm text-[#9ca3af]">Join Autonomous AI to audit and refactor your code</p>
+          <p className="text-sm text-[#9ca3af]">Join PulsarAI to audit and refactor your code</p>
         </div>
 
         {/* SignUp Form Card */}
@@ -118,17 +103,10 @@ export default function SignUp() {
                   type="text"
                   placeholder="John Doe"
                   value={name}
-                  onChange={handleNameChange}
-                  className={`w-full pl-10 pr-4 py-2.5 rounded-xl border bg-[#0c0c0e]/80 text-white placeholder-[#4b5563] text-sm focus:ring-1 outline-none transition-all ${
-                    nameError 
-                      ? 'border-red-500/80 focus:border-red-500/80 focus:ring-red-500/80' 
-                      : 'border-[#1f1f23] focus:border-indigo-500/80 focus:ring-indigo-500/80'
-                  }`}
+                  onChange={(e) => setName(e.target.value)}
+                  className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-[#1f1f23] bg-[#0c0c0e]/80 text-white placeholder-[#4b5563] text-sm focus:border-indigo-500/80 focus:ring-1 focus:ring-indigo-500/80 outline-none transition-all"
                 />
               </div>
-              {nameError && (
-                <p className="mt-1.5 text-xs text-red-400 font-medium">{nameError}</p>
-              )}
             </div>
 
             {/* Email Field */}
@@ -233,6 +211,38 @@ export default function SignUp() {
             </button>
           </form>
 
+          {/* Social Signups */}
+          <div className="mt-6">
+            <div className="relative mb-5">
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full border-t border-[#1f1f23]"></div>
+              </div>
+              <div className="relative flex justify-center text-xs uppercase tracking-wider font-semibold">
+                <span className="bg-[#0a0a0c] px-3.5 text-[#6b7280]">Or sign up with</span>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <button
+                type="button"
+                onClick={() => handleOAuthSignUp('GitHub')}
+                className="flex items-center justify-center gap-2.5 py-2 rounded-xl border border-[#1f1f23] bg-[#0c0c0e]/80 hover:bg-[#161619] text-sm text-[#e5e7eb] hover:text-white transition-all cursor-pointer font-medium"
+              >
+                <Github size={16} />
+                GitHub
+              </button>
+              <button
+                type="button"
+                onClick={() => handleOAuthSignUp('Google')}
+                className="flex items-center justify-center gap-2.5 py-2 rounded-xl border border-[#1f1f23] bg-[#0c0c0e]/80 hover:bg-[#161619] text-sm text-[#e5e7eb] hover:text-white transition-all cursor-pointer font-medium"
+              >
+                <svg className="w-4 h-4" viewBox="0 0 24 24">
+                  <path fill="#EA4335" d="M12.24 10.285V14.4h6.887c-.648 2.41-2.519 4.114-5.186 4.114-3.504 0-6.343-2.839-6.343-6.343s2.839-6.343 6.343-6.343c1.624 0 3.099.613 4.228 1.624l3.15-3.15C19.167 2.228 15.938 1 12.24 1 6.032 1 1 6.032 1 12.24s5.032 11.24 11.24 11.24c5.897 0 10.8-4.228 10.8-11.24 0-.583-.058-1.127-.16-1.655H12.24Z"/>
+                </svg>
+                Google
+              </button>
+            </div>
+          </div>
 
         </div>
 

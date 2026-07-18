@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Menu, Cpu, Bell, ChevronDown } from 'lucide-react';
 import Sidebar from './Sidebar';
-import Avatar from '../common/Avatar';
 import { useAuth } from '../../context/AuthContext';
 
 export default function DashboardLayout({ children }) {
@@ -25,7 +24,7 @@ export default function DashboardLayout({ children }) {
           <div className="w-12 h-12 rounded-xl bg-indigo-500/10 border border-indigo-500/30 flex items-center justify-center animate-spin">
             <Cpu size={24} className="text-indigo-400" />
           </div>
-          <span className="text-sm text-[#9ca3af] font-medium tracking-wide">Loading Autonomous AI...</span>
+          <span className="text-sm text-[#9ca3af] font-medium tracking-wide">Loading PulsarAI...</span>
         </div>
       </div>
     );
@@ -49,12 +48,12 @@ export default function DashboardLayout({ children }) {
         if (location.pathname.startsWith('/reviews/')) {
           return 'Analysis Report';
         }
-        return 'Autonomous AI';
+        return 'PulsarAI';
     }
   };
 
   return (
-    <div className="flex h-screen bg-[#030303] text-white overflow-hidden">
+    <div className="flex min-h-screen bg-[#030303] text-white">
       {/* Sidebar Panel */}
       <Sidebar isMobileOpen={isMobileOpen} setIsMobileOpen={setIsMobileOpen} />
 
@@ -93,10 +92,10 @@ export default function DashboardLayout({ children }) {
 
             {/* Quick Profile Dropdown wrapper */}
             <div className="flex items-center gap-2 pl-2 border-l border-[#1f1f23]">
-              <Avatar 
+              <img 
                 src={user.avatar} 
                 alt={user.name} 
-                className="w-7 h-7 border border-[#1f1f23]"
+                className="w-7 h-7 rounded-full object-cover border border-[#1f1f23] cursor-pointer"
                 onClick={() => navigate('/profile')}
               />
               <ChevronDown size={14} className="text-[#6b7280] hidden sm:block" />

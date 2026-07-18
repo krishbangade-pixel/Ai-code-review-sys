@@ -16,7 +16,6 @@ import {
   Zap
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
-import Avatar from '../common/Avatar';
 
 export default function Sidebar({ isMobileOpen, setIsMobileOpen }) {
   const { user, logout } = useAuth();
@@ -38,7 +37,7 @@ export default function Sidebar({ isMobileOpen, setIsMobileOpen }) {
   };
 
   const SidebarContent = () => (
-    <div className="sidebar-container flex flex-col h-full bg-[#0a0a0c] border-r border-[#1f1f23] text-[#9ca3af]">
+    <div className="flex flex-col h-full bg-[#0a0a0c] border-r border-[#1f1f23] text-[#9ca3af] overflow-hidden">
       {/* Brand logo */}
       <div className="flex items-center justify-between p-4 border-b border-[#1f1f23]">
         <div className="flex items-center gap-3 overflow-hidden" onClick={() => navigate('/dashboard')}>
@@ -49,9 +48,9 @@ export default function Sidebar({ isMobileOpen, setIsMobileOpen }) {
             <motion.span 
               initial={{ opacity: 0, x: -10 }}
               animate={{ opacity: 1, x: 0 }}
-              className="brand-logo-text text-lg font-bold bg-gradient-to-r from-white via-[#f3f4f6] to-purple-400 bg-clip-text text-transparent font-sans cursor-pointer"
+              className="text-lg font-bold bg-gradient-to-r from-white via-[#f3f4f6] to-purple-400 bg-clip-text text-transparent font-sans cursor-pointer"
             >
-              Autonomous<span className="text-indigo-400 font-extrabold">AI</span>
+              Pulsar<span className="text-indigo-400 font-extrabold">AI</span>
             </motion.span>
           )}
         </div>
@@ -73,9 +72,30 @@ export default function Sidebar({ isMobileOpen, setIsMobileOpen }) {
         </button>
       </div>
 
+      {/* Credit balance indicator */}
+      {!isCollapsed && user && (
+        <motion.div 
+          initial={{ opacity: 0, y: -5 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="m-4 p-3.5 rounded-xl border border-indigo-500/10 bg-indigo-500/5 flex flex-col gap-2 relative overflow-hidden"
+        >
+          <div className="absolute -right-8 -top-8 w-20 h-20 bg-indigo-500/5 blur-xl rounded-full" />
+          <div className="flex items-center gap-2 text-xs font-semibold text-indigo-400 uppercase tracking-wider">
+            <Zap size={13} className="fill-indigo-400" />
+            <span>AI Credits</span>
+          </div>
+          <div className="flex items-baseline gap-1.5">
+            <span className="text-2xl font-extrabold text-white font-mono">{user.credits}</span>
+            <span className="text-[10px] text-[#6b6f76]">rem.</span>
+          </div>
+          <div className="w-full bg-[#1f1f23] h-1.5 rounded-full overflow-hidden">
+            <div className="h-full bg-indigo-500 rounded-full" style={{ width: `${Math.min(100, (user.credits/200)*100)}%` }} />
+          </div>
+        </motion.div>
+      )}
 
       {/* Navigation Links */}
-      <nav className="flex-1 px-3 py-4 space-y-1">
+      <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto scrollbar-none">
         {navItems.map((item) => {
           const isActive = location.pathname === item.path || (item.path === '/dashboard' && location.pathname === '/');
           return (
@@ -110,10 +130,10 @@ export default function Sidebar({ isMobileOpen, setIsMobileOpen }) {
         <div className="p-3 border-t border-[#1f1f23] flex flex-col gap-2">
           {!isCollapsed ? (
             <div className="flex items-center gap-3 p-2 rounded-xl bg-[#161619]/40 border border-[#1f1f23]/60">
-              <Avatar 
+              <img 
                 src={user.avatar} 
                 alt={user.name} 
-                className="w-9 h-9 border border-[#1f1f23]"
+                className="w-9 h-9 rounded-full object-cover border border-[#1f1f23]"
               />
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-semibold text-white truncate leading-none mb-1">{user.name}</p>
@@ -124,10 +144,10 @@ export default function Sidebar({ isMobileOpen, setIsMobileOpen }) {
             </div>
           ) : (
             <div className="flex justify-center py-2">
-              <Avatar 
+              <img 
                 src={user.avatar} 
                 alt={user.name} 
-                className="w-8 h-8 border border-[#1f1f23]"
+                className="w-8 h-8 rounded-full object-cover border border-[#1f1f23]"
                 onClick={() => navigate('/profile')}
               />
             </div>
@@ -156,11 +176,18 @@ export default function Sidebar({ isMobileOpen, setIsMobileOpen }) {
 
   return (
     <>
+      {/* Spacer to preserve layout structure when sidebar is fixed */}
+      <motion.div 
+        animate={{ width: isCollapsed ? '72px' : '260px' }}
+        transition={{ type: 'spring', damping: 20, stiffness: 120 }}
+        className="hidden md:block h-screen shrink-0"
+      />
+
       {/* Desktop Sidebar wrapper with Framer Motion width control */}
       <motion.div 
         animate={{ width: isCollapsed ? '72px' : '260px' }}
         transition={{ type: 'spring', damping: 20, stiffness: 120 }}
-        className="hidden md:block h-screen sticky top-0 shrink-0 overflow-y-auto"
+        className="hidden md:block h-screen fixed top-0 left-0 shrink-0 overflow-hidden z-20"
       >
         <SidebarContent />
       </motion.div>
@@ -183,7 +210,7 @@ export default function Sidebar({ isMobileOpen, setIsMobileOpen }) {
               animate={{ x: 0 }}
               exit={{ x: '-100%' }}
               transition={{ type: 'tween', duration: 0.3 }}
-              className="md:hidden fixed inset-y-0 left-0 w-[85vw] max-w-[270px] z-50 shadow-2xl"
+              className="md:hidden fixed inset-y-0 left-0 w-[85vw] max-w-[270px] z-50 shadow-2xl overflow-hidden"
             >
               <SidebarContent />
             </motion.div>
