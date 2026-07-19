@@ -13,6 +13,7 @@ import DashboardLayout from './components/layout/DashboardLayout';
 import Login from './pages/Login';
 import SignUp from './pages/SignUp';
 import ForgotPassword from './pages/ForgotPassword';
+import ResetPassword from './pages/ResetPassword';
 import Dashboard from './pages/Dashboard';
 import NewReview from './pages/NewReview';
 import Reviews from './pages/Reviews';
@@ -110,6 +111,7 @@ const AppContent = () => {
         <Route path="/login" element={<AuthRoute><Login /></AuthRoute>} />
         <Route path="/signup" element={<AuthRoute><SignUp /></AuthRoute>} />
         <Route path="/forgot-password" element={<AuthRoute><ForgotPassword /></AuthRoute>} />
+        <Route path="/reset-password" element={<ResetPassword />} />
 
         {/* Protected Dashboard/Audit Routes */}
         <Route path="/dashboard" element={

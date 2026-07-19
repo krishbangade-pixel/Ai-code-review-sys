@@ -1,26 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Cpu, Mail, ArrowLeft, Send, Lock, Eye, EyeOff } from 'lucide-react';
+import { Cpu, Mail, ArrowLeft, Send } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import toast from 'react-hot-toast';
 
 export default function ForgotPassword() {
-  const { forgotPassword, updatePassword, logout, loading } = useAuth();
+  const { forgotPassword, loading } = useAuth();
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [submitted, setSubmitted] = useState(false);
 
-  // Recovery flow states
-  const [isResetting, setIsResetting] = useState(false);
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-
   useEffect(() => {
-    // Detect if we landed from a password recovery link
-    // Supabase adds tokens to hash (#) when recovery/reset emails are clicked
+    // Detect if we landed from a password recovery link and redirect to /reset-password
     const hashParams = new URLSearchParams(window.location.hash.substring(1));
     const queryParams = new URLSearchParams(window.location.search);
     
@@ -30,9 +22,9 @@ export default function ForgotPassword() {
     const hasResetParam = queryParams.has('reset') && queryParams.get('reset') === 'true';
     
     if (hasAccessToken || hasResetParam) {
-      setIsResetting(true);
+      navigate(`/reset-password${window.location.search}${window.location.hash}`, { replace: true });
     }
-  }, []);
+  }, [navigate]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -43,29 +35,6 @@ export default function ForgotPassword() {
     const success = await forgotPassword(email);
     if (success) {
       setSubmitted(true);
-    }
-  };
-
-  const handleResetPassword = async (e) => {
-    e.preventDefault();
-    if (!password) {
-      toast.error('Please enter a new password');
-      return;
-    }
-    if (password.length < 6) {
-      toast.error('Password must be at least 6 characters');
-      return;
-    }
-    if (password !== confirmPassword) {
-      toast.error('Passwords do not match');
-      return;
-    }
-
-    const success = await updatePassword(null, password);
-    if (success) {
-      // Sign out from the temporary recovery session so they log in cleanly
-      await logout();
-      navigate('/login');
     }
   };
 
@@ -87,83 +56,16 @@ export default function ForgotPassword() {
             <Cpu size={32} />
           </div>
           <h2 className="text-3xl font-extrabold text-white tracking-tight mb-2">
-            {isResetting ? 'Create New Password' : 'Reset Password'}
+            Reset Password
           </h2>
           <p className="text-sm text-[#9ca3af]">
-            {isResetting ? 'Enter your secure new password credentials' : "We'll send you recovery details in seconds"}
+            We'll send you recovery details in seconds
           </p>
         </div>
 
         {/* Card */}
         <div className="glass-panel rounded-2xl border border-[#1f1f23] p-8 shadow-2xl relative">
-          {isResetting ? (
-            /* Reset password form */
-            <form onSubmit={handleResetPassword} className="space-y-6">
-              <div>
-                <label className="block text-xs font-semibold text-[#9ca3af] uppercase tracking-wider mb-2.5" htmlFor="password">
-                  New Password
-                </label>
-                <div className="relative">
-                  <span className="absolute inset-y-0 left-0 pl-3.5 flex items-center text-[#6b7280]">
-                    <Lock size={16} />
-                  </span>
-                  <input
-                    id="password"
-                    type={showPassword ? 'text' : 'password'}
-                    placeholder="••••••••"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    className="w-full pl-10 pr-10 py-3 rounded-xl border border-[#1f1f23] bg-[#0c0c0e]/80 text-white placeholder-[#4b5563] text-sm focus:border-indigo-500/80 focus:ring-1 focus:ring-indigo-500/80 outline-none transition-all"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-[#6b7280] hover:text-[#9ca3af] transition-colors"
-                  >
-                    {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
-                  </button>
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-xs font-semibold text-[#9ca3af] uppercase tracking-wider mb-2.5" htmlFor="confirmPassword">
-                  Confirm Password
-                </label>
-                <div className="relative">
-                  <span className="absolute inset-y-0 left-0 pl-3.5 flex items-center text-[#6b7280]">
-                    <Lock size={16} />
-                  </span>
-                  <input
-                    id="confirmPassword"
-                    type={showConfirmPassword ? 'text' : 'password'}
-                    placeholder="••••••••"
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
-                    className="w-full pl-10 pr-10 py-3 rounded-xl border border-[#1f1f23] bg-[#0c0c0e]/80 text-white placeholder-[#4b5563] text-sm focus:border-indigo-500/80 focus:ring-1 focus:ring-indigo-500/80 outline-none transition-all"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                    className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-[#6b7280] hover:text-[#9ca3af] transition-colors"
-                  >
-                    {showConfirmPassword ? <EyeOff size={16} /> : <Eye size={16} />}
-                  </button>
-                </div>
-              </div>
-
-              <button
-                type="submit"
-                disabled={loading}
-                className="w-full py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 disabled:bg-indigo-600/50 text-white font-semibold text-sm transition-all shadow-lg shadow-indigo-600/20 flex items-center justify-center gap-2 cursor-pointer"
-              >
-                {loading ? (
-                  <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                ) : (
-                  'Update Password'
-                )}
-              </button>
-            </form>
-          ) : !submitted ? (
+          {!submitted ? (
             /* Forgot password request form */
             <form onSubmit={handleSubmit} className="space-y-6">
               <div>

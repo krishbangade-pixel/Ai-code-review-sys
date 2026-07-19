@@ -155,7 +155,7 @@ export const AuthProvider = ({ children }) => {
               securityAlerts: true,
             }
           },
-          emailRedirectTo: `${window.location.origin}/`,
+          emailRedirectTo: `${import.meta.env.VITE_APP_URL || window.location.origin}/`,
         }
       });
 
@@ -192,8 +192,9 @@ export const AuthProvider = ({ children }) => {
   const forgotPassword = useCallback(async (email) => {
     setLoading(true);
     try {
+      const appUrl = import.meta.env.VITE_APP_URL || window.location.origin;
       const { data, error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: `${window.location.origin}/forgot-password?reset=true`,
+        redirectTo: `${appUrl}/reset-password`,
       });
 
       if (error) {
